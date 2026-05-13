@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa-IR" dir="rtl">
+<head>
+    <title>درج داده هواشناسی جدید</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #e6f7ff; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        input[type=submit] { background: #ff8c00; color: white; border: none; cursor: pointer; margin-top: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌦️ درج داده جدید هواشناسی (فقط مدیران)</h1>
+        {% if success %}
+            <p class="success">✅ داده هواشناسی با موفقیت ثبت شد.</p>
+        {% elif error %}
+            <p class="error">❌ {{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/add-weather">
+            <label>نام ایستگاه:</label>
+            <input type="text" name="station_name" required>
+            <label>دما (سانتی‌گراد):</label>
+            <input type="number" step="0.1" name="temperature">
+            <label>رطوبت (%):</label>
+            <input type="number" step="0.1" name="humidity">
+            <label>فشار هوا (hPa):</label>
+            <input type="number" step="0.1" name="pressure">
+            <label>سرعت باد (m/s):</label>
+            <input type="number" step="0.1" name="wind_speed">
+            <label>تاریخ پیش‌بینی (YYYY-MM-DD):</label>
+            <input type="date" name="forecast_date">
+            <label>ثبت‌کننده (نام کاربری شما):</label>
+            <input type="text" name="recorded_by" required>
+            <input type="submit" value="ثبت داده هواشناسی">
+        </form>
+        <p><a href="/">← بازگشت به صفحه اصلی</a></p>
+    </div>
+</body>
+</html>

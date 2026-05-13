@@ -1,25 +1,43 @@
 import sqlite3
 
-#1. connect DB
-DATABASE_FILE='project1.db'
-dbc=sqlite3.connect(DATABASE_FILE)
-cursor=dbc.cursor()
+DATABASE_FILE = 'weather_platform.db'
+dbc = sqlite3.connect(DATABASE_FILE)
+cursor = dbc.cursor()
 
-#2. execute SQL script
+# ایجاد جداول
 scriptSQL = '''
-        CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            message TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    '''
+    CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        message TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-cursor.execute(scriptSQL)
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        email TEXT NOT NULL,
+        role TEXT DEFAULT 'guest',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS weather_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        station_name TEXT NOT NULL,
+        temperature REAL,
+        humidity REAL,
+        pressure REAL,
+        wind_speed REAL,
+        forecast_date TEXT,
+        recorded_by TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+'''
+
+cursor.executescript(scriptSQL)
 dbc.commit()
 
-print('messages table created successfully')
-
-#3. close connection
+print("تمامی جداول با موفقیت ایجاد شدند.")
 dbc.close()

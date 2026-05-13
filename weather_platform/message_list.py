@@ -1,7 +1,7 @@
 import sqlite3
 
 # 1. connect DB
-DATABASE_FILE = 'project1.db'
+DATABASE_FILE = 'weather_platform.db'
 dbc = sqlite3.connect(DATABASE_FILE)
 cursor = dbc.cursor()
 
