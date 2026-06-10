@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}داشبورد مدیریت{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center text-white mb-12">
+        <h1 class="text-5xl font-bold mb-4">🏠 داشبورد مدیریت</h1>
+        <p class="text-xl text-purple-100">مدیریت یکپارچه کاربران، محصولات، پیام‌ها و داده‌های هواشناسی</p>
+    </div>
+    
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Users Card -->
+        <a href="/weather_platform/admin/users" class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover transform transition-all duration-300 hover:scale-105">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-center">
+                <div class="text-6xl mb-3">👥</div>
+                <h3 class="text-2xl font-bold text-white">مدیریت کاربران</h3>
+            </div>
+            <div class="p-6 text-center text-gray-600">
+                <p>مشاهده، افزودن و مدیریت کاربران سیستم</p>
+            </div>
+        </a>
+        
+        <!-- Products Card -->
+        <a href="/weather_platform/products/list" class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover transform transition-all duration-300 hover:scale-105">
+            <div class="bg-gradient-to-r from-teal-500 to-green-600 p-6 text-center">
+                <div class="text-6xl mb-3">🛒</div>
+                <h3 class="text-2xl font-bold text-white">مدیریت محصولات</h3>
+            </div>
+            <div class="p-6 text-center text-gray-600">
+                <p>مشاهده و مدیریت محصولات و خدمات</p>
+            </div>
+        </a>
+        
+        <!-- Messages Card -->
+        <a href="/weather_platform/admin/messages" class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover transform transition-all duration-300 hover:scale-105">
+            <div class="bg-gradient-to-r from-pink-500 to-rose-600 p-6 text-center">
+                <div class="text-6xl mb-3">💬</div>
+                <h3 class="text-2xl font-bold text-white">مدیریت پیام‌ها</h3>
+            </div>
+            <div class="p-6 text-center text-gray-600">
+                <p>مشاهده و پاسخ به پیام‌های دریافتی</p>
+            </div>
+        </a>
+        
+        <!-- Weather Data Card -->
+        <a href="/weather_platform/weather/list" class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover transform transition-all duration-300 hover:scale-105">
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-600 p-6 text-center">
+                <div class="text-6xl mb-3">🌤</div>
+                <h3 class="text-2xl font-bold text-white">داده‌های هواشناسی</h3>
+            </div>
+            <div class="p-6 text-center text-gray-600">
+                <p>مشاهده و تحلیل داده‌های هواشناسی</p>
+            </div>
+        </a>
+        
+        <!-- Reports Card -->
+        <a href="/weather_platform/reports/list" class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover transform transition-all duration-300 hover:scale-105">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-6 text-center">
+                <div class="text-6xl mb-3">📊</div>
+                <h3 class="text-2xl font-bold text-white">گزارش‌های تحلیلی</h3>
+            </div>
+            <div class="p-6 text-center text-gray-600">
+                <p>مشاهده گزارش‌های تولید شده</p>
+            </div>
+        </a>
+        
+        <!-- Products Catalog Card -->
+        <a href="/weather_platform/products/catalog" class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover transform transition-all duration-300 hover:scale-105">
+            <div class="bg-gradient-to-r from-blue-500 to-cyan-600 p-6 text-center">
+                <div class="text-6xl mb-3">🛍</div>
+                <h3 class="text-2xl font-bold text-white">کاتالوگ محصولات</h3>
+            </div>
+            <div class="p-6 text-center text-gray-600">
+                <p>مشاهده محصولات در قالب کارت‌های زیبا</p>
+            </div>
+        </a>
+    </div>
+    
+    <!-- Quick Links -->
+    <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">⚡ لینک‌های سریع</h3>
+        <div class="flex flex-wrap gap-3 justify-center">
+            <a href="/weather_platform/register" class="px-5 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all duration-300">➕ ثبت نام کاربر جدید</a>
+            <a href="/weather_platform/products/new" class="px-5 py-2 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-all duration-300">➕ افزودن محصول جدید</a>
+            <a href="/weather_platform/messages/new" class="px-5 py-2 bg-pink-500 text-white rounded-xl hover:bg-pink-600 transition-all duration-300">✉️ ارسال پیام جدید</a>
+            <a href="/weather_platform/add_weather" class="px-5 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition-all duration-300">🌡 ثبت داده هواشناسی</a>
+            <a href="/weather_platform/products/catalog" class="px-5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all duration-300">🛍 کاتالوگ محصولات</a>
+            <a href="/weather_platform/admin/users/edit/1" class="px-5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all duration-300">✏️ ویرایش کاربر (ID=1)</a>
+<a href="/weather_platform/products/edit/1" class="px-5 py-2 bg-cyan-500 text-white rounded-xl hover:bg-cyan-600 transition-all duration-300">✏️ ویرایش محصول (ID=1)</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,3 +1,5 @@
+# web_based_programming_project/web_server.py
+
 import os
 
 import importlib.util
@@ -8,12 +10,14 @@ from urllib.parse import urlparse
 
 from pathlib import Path
 
+import sys
+
 BASE_DIR = Path(__file__).resolve().parent
 
-PROJECTS = {}  # project_name -> router_module
+projects = {}  # project_name -> router_module
+
 
 def load_router(module_path):
-
     """Load router.py dynamically"""
 
     spec = importlib.util.spec_from_file_location("router_module", module_path)
@@ -24,26 +28,23 @@ def load_router(module_path):
 
     return module
 
-def auto_load_projects():
 
+def auto_load_projects():
     """Scan folder for project directories"""
 
     print("Scanning for projects...")
 
-    for item in BASE_DIR.iterdir():
+    for item in BASE_DIR.iterdir():  # foreach folder/file in server directory
 
-        if not item.is_dir():
-
+        if not item.is_dir():  # if not a directory
             continue
 
         if item.name in ["__pycache__", "venv"]:
-
             continue
 
         router_file = item / "router.py"
 
-        if not router_file.exists():
-
+        if not router_file.exists():  # if project doesnt contain a router
             continue
 
         project_name = item.name
@@ -51,6 +52,8 @@ def auto_load_projects():
         print(f"Found project: {project_name}")
 
         try:
+
+            sys.path.insert(0, str(item))  # add project folder to system path (easy import)
 
             module = load_router(router_file)
 
@@ -61,14 +64,14 @@ def auto_load_projects():
             continue
 
         if not hasattr(module, "route"):
-
             print(f"WARNING: {project_name}/router.py missing 'route' function")
 
             continue
 
-        PROJECTS[project_name] = module
+        projects[project_name] = module
 
         print(f"[OK] Project '{project_name}' loaded.")
+
 
 class MultiProjectHandler(BaseHTTPRequestHandler):
 
@@ -89,13 +92,11 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         parts = path.strip("/").split("/")
 
         if not parts or parts == ['']:
-
             return self.show_home()
 
         project = parts[0]
 
-        if project not in PROJECTS:
-
+        if project not in projects:
             return self.send_not_found(f"Project '{project}' not found.")
 
         inner_path = "/" + "/".join(parts[1:]) if len(parts) > 1 else "/"
@@ -105,14 +106,13 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         body = None
 
         if method == "POST":
-
             length = int(self.headers.get('Content-Length', 0))
 
             body = self.rfile.read(length).decode("utf-8") if length > 0 else ""
 
         try:
 
-            response_text, status, headers = PROJECTS[project].route(
+            response_text, status, headers = projects[project].route(
 
                 inner_path, method, body
 
@@ -121,7 +121,6 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
             self.send_response(status)
 
             for h, v in headers.items():
-
                 self.send_header(h, v)
 
             self.end_headers()
@@ -136,8 +135,7 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         html = "<h1>Multi-Project Python Server (No Framework)</h1><ul>"
 
-        for name in PROJECTS.keys():
-
+        for name in projects.keys():
             html += f"<li><a href='/{name}'>{name}</a></li>"
 
         html += "</ul>"
@@ -160,8 +158,8 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(msg.encode("utf-8"))
 
-def run_server():
 
+def run_server():
     auto_load_projects()
 
     print("Server running on http://localhost:8000 ...")
@@ -170,6 +168,6 @@ def run_server():
 
     server.serve_forever()
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     run_server()

@@ -3,15 +3,7 @@
 <head>
     <title>ثبت‌نام - سامانه تحلیل هواشناسی</title>
     <meta charset="utf-8">
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #e6f7ff; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-        input[type=submit] { background: #28a745; color: white; border: none; cursor: pointer; margin-top: 20px; }
-        .success { color: green; }
-        .error { color: red; }
-    </style>
+    <link rel = "stylesheet" type = "text/css" href = "css/style.css">
 </head>
 <body>
     <div class="container">
@@ -21,15 +13,23 @@
         {% elif error %}
             <p class="error">❌ {{ error }}</p>
         {% endif %}
-        <form method="POST" action="/register">
+        <form method="POST" action="">
             <label>نام کاربری:</label>
-            <input type="text" name="username" required>
+            <label>
+                <input type="text" name="username" required>
+            </label>
             <label>ایمیل:</label>
-            <input type="email" name="email" required>
+            <label>
+                <input type="email" name="email" required>
+            </label>
             <label>رمز عبور:</label>
-            <input type="password" name="password" required>
+            <label>
+                <input type="password" name="password" required>
+            </label>
             <label>نقش کاربری (admin/analyst/guest):</label>
-            <input type="text" name="role" value="guest">
+            <label>
+                <input type="text" name="role" value="guest">
+            </label>
             <input type="submit" value="ثبت‌نام">
         </form>
         <p><a href="/">← بازگشت به صفحه اصلی</a></p>

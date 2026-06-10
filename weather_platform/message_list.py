@@ -10,6 +10,7 @@ scriptSQL = '''
         SELECT * FROM messages
     '''
 cursor.execute(scriptSQL)
+
 #dbc.commit()
 results = cursor.fetchall() #SELECT query
 print('messages fetched successfully')

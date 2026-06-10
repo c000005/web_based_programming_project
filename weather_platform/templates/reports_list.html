@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>گزارش‌های تحلیلی</title>
+    <style>
+        body { font-family: Tahoma, Arial; max-width: 1200px; margin: 20px auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: right; }
+        th { background-color: #9b59b6; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>📈 لیست گزارش‌های تحلیلی</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>عنوان</th><th>نوع</th><th>از تاریخ</th><th>تا تاریخ</th>
+                <th>منطقه</th><th>دسترسی</th><th>بازدید</th><th>تاریخ ایجاد</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{reports_rows}}
+        </tbody>
+    </table>
+    <a href="/dashboard">← بازگشت به داشبورد</a>
+</body>
+</html>

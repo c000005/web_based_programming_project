@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}لیست محصولات{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-teal-500 to-green-600 px-6 py-8">
+            <h1 class="text-3xl font-bold text-white text-center">🛒 لیست محصولات و خدمات</h1>
+            <p class="text-teal-100 text-center mt-2">مدیریت محصولات و تعرفه‌ها</p>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="bg-gray-50 px-6 py-4 border-b flex flex-wrap gap-3">
+            <a href="/weather_platform/dashboard" class="px-4 py-2 bg-teal-100 text-teal-700 rounded-lg hover:bg-teal-600 hover:text-white transition-all duration-300">🏠 داشبورد</a>
+            <a href="/weather_platform/admin/users" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-teal-600 hover:text-white transition-all duration-300">👥 کاربران</a>
+            <a href="/weather_platform/products/list" class="px-4 py-2 bg-teal-600 text-white rounded-lg">🛒 محصولات</a>
+            <a href="/weather_platform/admin/messages" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-teal-600 hover:text-white transition-all duration-300">💬 پیام‌ها</a>
+            <a href="/weather_platform/weather/list" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-teal-600 hover:text-white transition-all duration-300">🌤 هواشناسی</a>
+            <a href="/weather_platform/products/new" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300">➕ افزودن محصول</a>
+        </div>
+        
+        <!-- Table -->
+        <div class="overflow-x-auto p-6">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gradient-to-r from-teal-500 to-green-600 text-white">
+                        <th class="px-4 py-3 text-center rounded-l-lg">عملیات</th>
+                        <th class="px-4 py-3 text-center rounded-r-lg">ID</th>
+                        <th class="px-4 py-3 text-center">نام محصول</th>
+                        <th class="px-4 py-3 text-center">توضیحات</th>
+                        <th class="px-4 py-3 text-center">قیمت</th>
+                        <th class="px-4 py-3 text-center">دسته‌بندی</th>
+                        <th class="px-4 py-3 text-center">وضعیت</th>
+                        <th class="px-4 py-3 text-center rounded-l-lg">تاریخ ایجاد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{products_rows}}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-gray-50 px-6 py-4 border-t text-center text-gray-600">
+            📊 نمایش تمام محصولات فعال و غیرفعال
+        </div>
+    </div>
+</div>
+{% endblock %}

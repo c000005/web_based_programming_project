@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}ویرایش محصول{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-teal-500 to-green-600 px-6 py-8">
+            <h1 class="text-3xl font-bold text-white text-center">✏️ ویرایش اطلاعات محصول</h1>
+            <p class="text-teal-100 text-center mt-2">در حال ویرایش محصول با شناسه {{product_id}}</p>
+        </div>
+
+        <!-- Form -->
+        <form action="/weather_platform/products/edit/1" method="POST" class="p-8">
+            <!-- Product Name -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2" for="name">
+                    نام محصول <span class="text-red-500">*</span>
+                </label>
+                <input type="text"
+                       id="name"
+                       name="name"
+                       value="{{name}}"
+                       required
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+            </div>
+
+            <!-- Description -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2" for="description">
+                    توضیحات محصول
+                </label>
+                <textarea id="description"
+                          name="description"
+                          rows="4"
+                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">{{description}}</textarea>
+                <p class="text-gray-500 text-sm mt-1">حداکثر 500 کاراکتر</p>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2" for="price">
+                    قیمت (تومان)
+                </label>
+                <input type="number"
+                       id="price"
+                       name="price"
+                       value="{{price}}"
+                       step="1000"
+                       min="0"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+            </div>
+
+            <!-- Category -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2" for="category">
+                    دسته‌بندی
+                </label>
+                <select id="category"
+                        name="category"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <option value="">انتخاب دسته‌بندی</option>
+                    <option value="subscription" {% if category == 'subscription' %}selected{% endif %}>📅 اشتراک</option>
+                    <option value="api_access" {% if category == 'api_access' %}selected{% endif %}>🔌 دسترسی API</option>
+                    <option value="custom_report" {% if category == 'custom_report' %}selected{% endif %}>📊 گزارش سفارشی</option>
+                </select>
+            </div>
+
+            <!-- Active Status -->
+            <div class="mb-8">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox"
+                           name="is_active"
+                           class="w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
+                           {{is_active_checked}}>
+                    <span class="mr-3 text-gray-700 font-bold">محصول فعال باشد</span>
+                </label>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-teal-500 to-green-600 text-white py-3 rounded-xl hover:from-teal-600 hover:to-green-700 transition-all duration-300 font-bold">
+                    💾 ذخیره تغییرات
+                </button>
+                <a href="/weather_platform/products/list"
+                   class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl text-center hover:bg-gray-400 transition-all duration-300 font-bold">
+                    ❌ انصراف
+                </a>
+            </div>
+        </form>
+
+        <!-- Info Box -->
+        <div class="bg-yellow-50 border-t border-yellow-200 px-6 py-4">
+            <p class="text-yellow-800 text-sm">
+                💡 نکته: قیمت باید به تومان وارد شود. برای غیرفعال کردن محصول، تیک گزینه "محصول فعال باشد" را بردارید.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

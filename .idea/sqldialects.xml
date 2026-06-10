@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/weather_platform/controllers/add_message.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/weather_platform/controllers/message_add.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/weather_platform/controllers/product_add.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/weather_platform/controllers/user_add.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/weather_platform/db_setup.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/weather_platform/message_list.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/weather_platform/router.py" dialect="GenericSQL" />
+  </component>
+</project>

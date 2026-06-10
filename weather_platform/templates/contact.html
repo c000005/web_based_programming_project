@@ -3,15 +3,7 @@
 <head>
     <title>تماس با ما - سامانه تحلیل هواشناسی</title>
     <meta charset="utf-8">
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #e6f7ff; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-        input[type=submit] { background: #0077be; color: white; border: none; cursor: pointer; margin-top: 20px; }
-        .success { color: green; }
-        .error { color: red; }
-    </style>
+    <link rel = "stylesheet" type = "text/css" href = "css/style.css">
 </head>
 <body>
     <div class="container">
@@ -21,13 +13,19 @@
         {% elif error %}
             <p class="error">❌ خطا در ارسال پیام. لطفاً دوباره تلاش کنید.</p>
         {% endif %}
-        <form method="POST" action="/contact">
+        <form method="POST" action="">
             <label>نام و نام خانوادگی:</label>
-            <input type="text" name="name" required>
+            <label>
+                <input type="text" name="name" required>
+            </label>
             <label>ایمیل:</label>
-            <input type="email" name="email" required>
+            <label>
+                <input type="email" name="email" required>
+            </label>
             <label>پیام شما:</label>
-            <textarea name="message" rows="5" required></textarea>
+            <label>
+                <textarea name="message" rows="5" required></textarea>
+            </label>
             <input type="submit" value="ارسال پیام">
         </form>
         <p><a href="/">← بازگشت به صفحه اصلی</a></p>
