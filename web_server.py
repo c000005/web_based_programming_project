@@ -1,5 +1,4 @@
 # web_based_programming_project/web_server.py
-# web_based_programming_project/web_server.py
 
 import os
 import importlib.util
