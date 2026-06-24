@@ -1,14 +1,15 @@
-<!-- web_based_programming_project/weather_platform/templates/contact.html -->
+<!-- web_based_programming_project/weather_platform/templates/message_form.html -->
 {% include "_header.html" %}
 
 {% include "_nav.html" %}
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
     <div class="card-header" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">
-        <h2>📧 تماس با مدیریت سامانه هواشناسی</h2>
+        <h2>✉️ ارسال پیام جدید</h2>
+        <p style="opacity: 0.9; margin-top: 5px;">تماس با تیم پشتیبانی</p>
     </div>
 
-    <form action="/weather_platform/contact" method="POST">
+    <form action="/weather_platform/messages/new" method="POST">
         <div class="form-group">
             <label for="name">نام و نام خانوادگی <span class="required">*</span></label>
             <input type="text" id="name" name="name" class="form-control" required>
@@ -20,7 +21,12 @@
         </div>
 
         <div class="form-group">
-            <label for="message">پیام شما <span class="required">*</span></label>
+            <label for="subject">موضوع</label>
+            <input type="text" id="subject" name="subject" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="message">متن پیام <span class="required">*</span></label>
             <textarea id="message" name="message" class="form-control" rows="5" required></textarea>
         </div>
 
@@ -30,3 +36,4 @@
         </div>
     </form>
 </div>
+{% include "_footer.html" %}

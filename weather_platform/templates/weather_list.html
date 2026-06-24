@@ -1,31 +1,40 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>داده‌های هواشناسی</title>
-    <style>
-        body { font-family: Tahoma, Arial; max-width: 1300px; margin: 20px auto; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
-        th { background-color: #2ecc71; color: white; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
-        h1 { color: #2c3e50; }
-        .back-link { display: inline-block; margin-top: 20px; color: #2ecc71; text-decoration: none; }
-    </style>
-</head>
-<body>
-    <h1>🌤️ داده‌های هواشناسی (۵۰ رکورد آخر)</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th><th>ایستگاه</th><th>شهر</th><th>کشور</th><th>تاریخ</th>
-                <th>دما(°C)</th><th>رطوبت(%)</th><th>فشار(hPa)</th><th>سرعت باد(m/s)</th><th>وضعیت</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{weather_rows}}
-        </tbody>
-    </table>
-    <a href="/dashboard" class="back-link">← بازگشت به داشبورد</a>
-</body>
-</html>
+<!-- web_based_programming_project/weather_platform/templates/weather_list.html -->
+
+<div class="header" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
+    <h1>🌤️ داده‌های هواشناسی</h1>
+    <p>۵۰ رکورد آخر</p>
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+    <a href="/weather_platform/dashboard">🏠 داشبورد</a>
+    <a href="/weather_platform/weather/list" class="active">🌤 هواشناسی</a>
+</div>
+
+<!-- Table -->
+<div class="card">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ایستگاه</th>
+                    <th>شهر</th>
+                    <th>کشور</th>
+                    <th>تاریخ</th>
+                    <th>دما(°C)</th>
+                    <th>رطوبت(%)</th>
+                    <th>فشار(hPa)</th>
+                    <th>سرعت باد(m/s)</th>
+                    <th>وضعیت</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{weather_rows}}
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center mt-20" style="color: #666;">
+        📊 نمایش ۵۰ رکورد آخر داده‌های هواشناسی
+    </div>
+</div>

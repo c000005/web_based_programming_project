@@ -1,15 +1,11 @@
 # web_based_programming_project/web_server.py
+# web_based_programming_project/web_server.py
 
 import os
-
 import importlib.util
-
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
 from urllib.parse import urlparse
-
 from pathlib import Path
-
 import sys
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -19,78 +15,91 @@ projects = {}  # project_name -> router_module
 
 def load_router(module_path):
     """Load router.py dynamically"""
-
     spec = importlib.util.spec_from_file_location("router_module", module_path)
-
     module = importlib.util.module_from_spec(spec)
-
     spec.loader.exec_module(module)
-
     return module
 
 
 def auto_load_projects():
     """Scan folder for project directories"""
-
     print("Scanning for projects...")
-
-    for item in BASE_DIR.iterdir():  # foreach folder/file in server directory
-
-        if not item.is_dir():  # if not a directory
+    for item in BASE_DIR.iterdir():
+        if not item.is_dir():
             continue
-
         if item.name in ["__pycache__", "venv"]:
             continue
-
         router_file = item / "router.py"
-
-        if not router_file.exists():  # if project doesnt contain a router
+        if not router_file.exists():
             continue
-
         project_name = item.name
-
         print(f"Found project: {project_name}")
-
         try:
-
-            sys.path.insert(0, str(item))  # add project folder to system path (easy import)
-
+            sys.path.insert(0, str(item))
             module = load_router(router_file)
-
         except Exception as e:
-
             print(f"ERROR loading router for {project_name}: {e}")
-
             continue
-
         if not hasattr(module, "route"):
             print(f"WARNING: {project_name}/router.py missing 'route' function")
-
             continue
-
         projects[project_name] = module
-
         print(f"[OK] Project '{project_name}' loaded.")
 
 
 class MultiProjectHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-
         self.handle_request("GET")
 
     def do_POST(self):
-
         self.handle_request("POST")
 
     def handle_request(self, method):
-
         parsed = urlparse(self.path)
-
         path = parsed.path
-
         parts = path.strip("/").split("/")
 
+        # Check if it's a static file request for a project
+        if len(parts) >= 2 and parts[0] in projects:
+            # Check if it's a static file request
+            if len(parts) >= 3 and parts[1] == "static":
+                # Serve static file from the project
+                project_name = parts[0]
+                # Get the rest of the path after /project_name/static/
+                static_path = "/".join(parts[2:])
+                project_dir = BASE_DIR / project_name
+                file_path = project_dir / "static" / static_path
+
+                if file_path.exists() and file_path.is_file():
+                    content = file_path.read_bytes()
+                    ext = file_path.suffix.lower()
+                    content_types = {
+                        '.css': 'text/css',
+                        '.js': 'application/javascript',
+                        '.png': 'image/png',
+                        '.jpg': 'image/jpeg',
+                        '.jpeg': 'image/jpeg',
+                        '.gif': 'image/gif',
+                        '.svg': 'image/svg+xml',
+                        '.ico': 'image/x-icon',
+                        '.html': 'text/html',
+                        '.txt': 'text/plain',
+                    }
+                    content_type = content_types.get(ext, 'application/octet-stream')
+                    self.send_response(200)
+                    self.send_header('Content-type', content_type)
+                    self.end_headers()
+                    self.wfile.write(content)
+                    return
+                else:
+                    self.send_response(404)
+                    self.send_header('Content-type', 'text/plain')
+                    self.end_headers()
+                    self.wfile.write(f"File not found: {static_path}".encode('utf-8'))
+                    return
+
+        # Regular route handling
         if not parts or parts == ['']:
             return self.show_home()
 
@@ -101,71 +110,66 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         inner_path = "/" + "/".join(parts[1:]) if len(parts) > 1 else "/"
 
-        # Read POST body اگر لازم شد
-
+        # Read POST body if needed
         body = None
-
         if method == "POST":
             length = int(self.headers.get('Content-Length', 0))
-
-            body = self.rfile.read(length).decode("utf-8") if length > 0 else ""
+            body = self.rfile.read(length) if length > 0 else b""
 
         try:
+            result = projects[project].route(inner_path, method, body)
 
-            response_text, status, headers = projects[project].route(
-
-                inner_path, method, body
-
-            )
+            if isinstance(result, tuple):
+                if len(result) == 3:
+                    response_data, status, headers = result
+                elif len(result) == 2:
+                    response_data, status = result
+                    headers = {}
+                else:
+                    response_data, status, headers = result
+            else:
+                response_data = result
+                status = 200
+                headers = {}
 
             self.send_response(status)
-
             for h, v in headers.items():
                 self.send_header(h, v)
-
             self.end_headers()
 
-            self.wfile.write(response_text.encode("utf-8"))
+            if isinstance(response_data, bytes):
+                self.wfile.write(response_data)
+            elif isinstance(response_data, str):
+                self.wfile.write(response_data.encode('utf-8'))
+            else:
+                self.wfile.write(str(response_data).encode('utf-8'))
 
         except Exception as e:
-
+            import traceback
+            traceback.print_exc()
             self.send_not_found(f"Router error: {e}")
 
     def show_home(self):
-
         html = "<h1>Multi-Project Python Server (No Framework)</h1><ul>"
-
         for name in projects.keys():
             html += f"<li><a href='/{name}'>{name}</a></li>"
-
         html += "</ul>"
-
         self.send_response(200)
-
         self.send_header('Content-type', 'text/html')
-
         self.end_headers()
-
         self.wfile.write(html.encode("utf-8"))
 
     def send_not_found(self, msg="Not found"):
-
         self.send_response(404)
-
         self.send_header('Content-type', 'text/plain')
-
         self.end_headers()
-
         self.wfile.write(msg.encode("utf-8"))
 
 
 def run_server():
     auto_load_projects()
-
     print("Server running on http://localhost:8000 ...")
-
     server = HTTPServer(("0.0.0.0", 8000), MultiProjectHandler)
-
     server.serve_forever()
 
 

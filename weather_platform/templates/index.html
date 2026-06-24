@@ -1,17 +1,21 @@
-<!DOCTYPE html>
-<html lang="fa-IR" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>سامانه تحلیلی هواشناسی</title>
-    <link rel = "stylesheet" type = "text/css" href = "css/style.css">
-</head>
+<!-- web_based_programming_project/weather_platform/templates/index.html -->
+{% include "_header.html" %}
+
 <body>
-    <div class="menu">
-        <h1>🌍 پلتفرم تحلیلی هواشناسی</h1>
-        <a href="weather_platform/contact">📨 تماس با ما (مهمان)</a>
-        <a href="weather_platform/register">📝 ثبت‌نام کاربران</a>
-        <a href="weather_platform/add_weather">🌦️ درج داده هواشناسی (مدیر/تحلیلگر)</a>
-        <a href="weather_platform/about">ℹ️ درباره ما</a>
+    <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center;">
+        <h1 style="color: #333; margin-bottom: 30px;">هواباز 🌍 پلتفرم تحلیلی هواشناسی</h1>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <a href="/weather_platform/contact" style="display: block; padding: 12px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333; transition: all 0.3s ease;" onmouseover="this.style.background='#667eea'; this.style.color='white';" onmouseout="this.style.background='#f8f9fa'; this.style.color='#333';">📨 تماس با ما (مهمان)</a>
+
+            <a href="/weather_platform/register" style="display: block; padding: 12px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333; transition: all 0.3s ease;" onmouseover="this.style.background='#11998e'; this.style.color='white';" onmouseout="this.style.background='#f8f9fa'; this.style.color='#333';">📝 ثبت‌نام کاربران</a>
+
+            <a href="/weather_platform/add_weather" style="display: block; padding: 12px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333; transition: all 0.3s ease;" onmouseover="this.style.background='#f7971e'; this.style.color='white';" onmouseout="this.style.background='#f8f9fa'; this.style.color='#333';">🌦️ درج داده هواشناسی (مدیر/تحلیلگر)</a>
+
+            <a href="/weather_platform/about" style="display: block; padding: 12px; background: #f8f9fa; border-radius: 8px; text-decoration: none; color: #333; transition: all 0.3s ease;" onmouseover="this.style.background='#764ba2'; this.style.color='white';" onmouseout="this.style.background='#f8f9fa'; this.style.color='#333';">ℹ️ درباره ما</a>
+
+            <a href="/weather_platform/dashboard" style="display: block; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; text-decoration: none; color: white; font-weight: bold; margin-top: 10px;">🏠 ورود به داشبورد</a>
+        </div>
     </div>
 </body>
-</html>
+{% include "_footer.html" %}

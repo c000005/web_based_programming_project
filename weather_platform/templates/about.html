@@ -1,13 +1,48 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <title>درباره ما - سامانه تحلیل هواشناسی</title>
-    <meta charset="utf-8">
-    <link rel = "stylesheet" type = "text/css" href = "css/style.css">
-</head>
+<!-- web_based_programming_project/weather_platform/templates/about.html -->
 
-<body>
+{% include "_header.html" %}
 
-</body>
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center;">
+        <div style="font-size: 4em; margin-bottom: 10px;">🌍</div>
+        <h1 style="font-size: 2.5em;">درباره پلتفرم تحلیل هواشناسی</h1>
+    </div>
 
-</html>
+    {% include "_nav.html" %}
+
+    <div style="padding: 20px;">
+        <h2 style="color: #333; margin-bottom: 15px;">🎯 ماموریت ما</h2>
+        <p style="color: #666; line-height: 1.8; margin-bottom: 25px;">
+            ارائه داده‌های دقیق هواشناسی و ابزارهای تحلیلی پیشرفته برای کمک به تصمیم‌گیری بهتر در حوزه‌های مختلف
+            از جمله کشاورزی، مدیریت منابع آب، حمل و نقل و برنامه‌ریزی شهری.
+        </p>
+
+        <h2 style="color: #333; margin-bottom: 15px;">✨ ویژگی‌های کلیدی</h2>
+        <ul style="color: #666; line-height: 2; list-style: none; padding: 0; margin-bottom: 25px;">
+            <li>✅ داده‌های هواشناسی دقیق و به‌روز</li>
+            <li>✅ گزارش‌های تحلیلی پیشرفته</li>
+            <li>✅ مدیریت کاربران و نقش‌های مختلف</li>
+            <li>✅ سیستم پیام‌رسانی داخلی</li>
+            <li>✅ مدیریت محصولات و خدمات</li>
+        </ul>
+
+        <h2 style="color: #333; margin-bottom: 15px;">🛠 تکنولوژی‌ها</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px;">
+            <span style="padding: 8px 20px; background: #e8eaf6; border-radius: 20px; color: #3949ab;">Python</span>
+            <span style="padding: 8px 20px; background: #e3f2fd; border-radius: 20px; color: #1565c0;">SQLite</span>
+            <span style="padding: 8px 20px; background: #e8f5e9; border-radius: 20px; color: #2e7d32;">CSS3</span>
+            <span style="padding: 8px 20px; background: #fff3e0; border-radius: 20px; color: #e65100;">HTML5</span>
+        </div>
+
+        <div style="background: #f5f5f5; border-radius: 10px; padding: 20px; text-align: center;">
+            <p style="color: #666;">💡 این پروژه برای درس برنامه‌نویسی وب ساخته شده است.</p>
+        </div>
+    </div>
+
+    <div style="background: #f5f5f5; padding: 15px; border-top: 1px solid #e0e0e0; text-align: center;">
+        <a href="/weather_platform/dashboard" style="color: #667eea; text-decoration: none; font-weight: bold;">
+            ← بازگشت به داشبورد
+        </a>
+    </div>
+</div>
+{% include "_footer.html" %}

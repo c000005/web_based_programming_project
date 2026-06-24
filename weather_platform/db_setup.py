@@ -8,13 +8,13 @@ BASE_DIR = Path(__file__).resolve().parent
 DATABASE_PATH = BASE_DIR / DATABASE_FILE
 
 def setup_database():
-    # چک کردن وجود فایل دیتابیس
+    """Create database with all tables if not exists"""
     if not os.path.exists(DATABASE_PATH):
-        print(f"[*] ساخت دیتابیس: {DATABASE_FILE}")
+        print(f"[*] Creating database: {DATABASE_FILE}")
         conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
 
-        # 1. جدول users (کاربران سیستم - تحلیل‌گران و ادمین‌ها)
+        # 1. users table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,14 +22,14 @@ def setup_database():
                 password_hash TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 full_name TEXT,
-                role TEXT DEFAULT 'analyst',   -- 'admin', 'analyst', 'viewer'
+                role TEXT DEFAULT 'viewer',
                 is_active BOOLEAN DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 last_login TIMESTAMP
             )
         ''')
 
-        # 2. جدول weather_data (داده‌های خام هواشناسی)
+        # 2. weather_data table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS weather_data (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,37 +38,37 @@ def setup_database():
                 country TEXT NOT NULL,
                 record_date DATE NOT NULL,
                 record_time TIME,
-                temperature_celsius REAL,        -- دمای سلسیوس
-                humidity_percent REAL,           -- رطوبت درصدی
-                pressure_hpa REAL,               -- فشار هوا (هکتوپاسکال)
-                wind_speed_ms REAL,              -- سرعت باد (متر بر ثانیه)
-                wind_direction_deg INTEGER,      -- جهت باد (درجه)
-                precipitation_mm REAL,           -- بارندگی (میلی‌متر)
-                cloud_cover_percent REAL,        -- پوشش ابر (درصد)
-                visibility_km REAL,              -- دید (کیلومتر)
-                weather_condition TEXT,          -- وضعیت هوا (بارانی، آفتابی و...)
-                source TEXT DEFAULT 'synop',     -- منبع داده
-                recorded_by INTEGER,             -- کاربر ثبت‌کننده (ارجاع به users.id)
+                temperature_celsius REAL,
+                humidity_percent REAL,
+                pressure_hpa REAL,
+                wind_speed_ms REAL,
+                wind_direction_deg INTEGER,
+                precipitation_mm REAL,
+                cloud_cover_percent REAL,
+                visibility_km REAL,
+                weather_condition TEXT,
+                source TEXT DEFAULT 'synop',
+                recorded_by INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (recorded_by) REFERENCES users (id) ON DELETE SET NULL
             )
         ''')
 
-        # 3. جدول analysis_reports (گزارش‌های تحلیلی تولید شده توسط تحلیل‌گران)
+        # 3. analysis_reports table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS analysis_reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
                 description TEXT,
-                report_type TEXT,                -- 'forecast', 'trend', 'extreme_weather', 'climate_change'
+                report_type TEXT,
                 start_date DATE,
                 end_date DATE,
-                region TEXT,                     -- منطقه تحت تحلیل
-                findings TEXT,                   -- یافته‌های کلیدی (JSON یا متن)
-                chart_data TEXT,                 -- داده‌های نمودار (JSON)
-                file_path TEXT,                  -- مسیر فایل گزارش (PDF/HTML)
-                created_by INTEGER NOT NULL,     -- تحلیل‌گر ایجادکننده
-                is_public BOOLEAN DEFAULT 0,     -- عمومی یا خصوصی
+                region TEXT,
+                findings TEXT,
+                chart_data TEXT,
+                file_path TEXT,
+                created_by INTEGER NOT NULL,
+                is_public BOOLEAN DEFAULT 0,
                 view_count INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -76,7 +76,7 @@ def setup_database():
             )
         ''')
 
-        # 4. جدول messages (فرم تماس - طبق خواسته استاد)
+        # 4. messages table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,7 +90,7 @@ def setup_database():
             )
         ''')
 
-        # 5. جدول optional: saved_queries (ذخیره کوئری‌های تحلیلی پرکاربرد توسط تحلیل‌گران)
+        # 5. saved_queries table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS saved_queries (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -103,32 +103,32 @@ def setup_database():
             )
         ''')
 
-        # 6. جدول products (جدید طبق تمرین استاد)
+        # 6. products table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 description TEXT,
                 price REAL,
-                category TEXT,      -- مثلا 'subscription', 'api_access', 'custom_report'
+                category TEXT,
                 is_active BOOLEAN DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
 
-        # commit و بستن اتصال
         conn.commit()
         conn.close()
 
-        print("[+] دیتابیس و تمام جداول با موفقیت ساخته شد.")
+        print("[+] Database and all tables created successfully.")
         print("    - users")
         print("    - weather_data")
         print("    - analysis_reports")
         print("    - messages")
         print("    - saved_queries")
+        print("    - products")
 
     else:
-        print(f"[!] دیتابیس {DATABASE_FILE} از قبل وجود دارد.")
+        print(f"[!] Database {DATABASE_FILE} already exists.")
 
 if __name__ == '__main__':
     setup_database()
