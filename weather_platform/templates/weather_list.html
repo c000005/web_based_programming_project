@@ -1,14 +1,12 @@
 <!-- web_based_programming_project/weather_platform/templates/weather_list.html -->
 
+{% include "_header.html" %}
+
+{% include "_nav.html" %}
+
 <div class="header" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
     <h1>🌤️ داده‌های هواشناسی</h1>
     <p>۵۰ رکورد آخر</p>
-</div>
-
-<!-- Navigation -->
-<div class="nav">
-    <a href="/weather_platform/dashboard">🏠 داشبورد</a>
-    <a href="/weather_platform/weather/list" class="active">🌤 هواشناسی</a>
 </div>
 
 <!-- Table -->
@@ -38,3 +36,4 @@
         📊 نمایش ۵۰ رکورد آخر داده‌های هواشناسی
     </div>
 </div>
+{% include "_footer.html" %}

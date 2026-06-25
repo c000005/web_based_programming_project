@@ -1,4 +1,4 @@
-/* web_based_programming_project/weather_platform/templates/css/style.css */
+/* web_based_programming_project/weather_platform/templates/static/css/style.css */
 
 /* BASE STYLES */
 * {
@@ -612,3 +612,168 @@ table tbody tr:last-child td {
 .shadow { box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); }
 
 .hidden { display: none; }
+
+/* FOOTER STYLES - Add this to your style.css */
+
+.footer {
+    background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 100%);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px 20px 0 0;
+    margin-top: 50px;
+    padding: 40px 30px 0 30px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-section h3 {
+    font-size: 1.8em;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.footer-section h3 span {
+    -webkit-text-fill-color: initial;
+}
+
+.footer-section h4 {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #a78bfa;
+    position: relative;
+}
+
+.footer-section h4::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #a78bfa 100%);
+}
+
+.footer-section p {
+    opacity: 0.8;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.footer-section ul li a:hover {
+    color: #a78bfa;
+    transform: translateX(-5px);
+}
+
+.footer-social {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+}
+
+.footer-social a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #a78bfa 100%);
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-bottom p {
+    opacity: 0.7;
+    font-size: 0.9em;
+}
+
+.footer-bottom a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom a:hover {
+    color: #a78bfa;
+}
+
+.footer-credit {
+    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: bold;
+}
+
+/* Responsive Footer */
+@media (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-section h4::after {
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+}
