@@ -1,0 +1,59 @@
+<!-- web_based_programming_project/weather_platform/templates/cart.html -->
+
+{% include "_header.html" %}
+
+{% include "_nav.html" %}
+
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-8">
+            <h1 class="text-3xl font-bold text-white text-center">🛒 سبد خرید</h1>
+            <p class="text-orange-100 text-center mt-2">{{item_count}} آیتم در سبد خرید شما</p>
+        </div>
+
+        <!-- Cart Content -->
+        <div class="p-8">
+            {% if item_count > 0 %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-3 text-right">شناسه</th>
+                                <th class="px-4 py-3 text-right">نام محصول</th>
+                                <th class="px-4 py-3 text-right">قیمت واحد</th>
+                                <th class="px-4 py-3 text-right">تعداد</th>
+                                <th class="px-4 py-3 text-right">مجموع</th>
+                                <th class="px-4 py-3 text-right">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{cart_items}}
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-gray-300 font-bold">
+                                <td colspan="4" class="px-4 py-4 text-left text-lg">مجموع کل:</td>
+                                <td class="px-4 py-4 text-lg text-green-600">{{total_price}} تومان</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mt-6 flex gap-4">
+                    <a href="/weather_platform/products/catalog" class="btn btn-secondary">📋 ادامه خرید</a>
+                    <a href="#" class="btn btn-primary flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">💳 تسویه حساب</a>
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <div class="text-6xl mb-4">🛒</div>
+                    <h3 class="text-2xl font-bold text-gray-700 mb-2">سبد خرید شما خالی است</h3>
+                    <p class="text-gray-500 mb-6">برای مشاهده محصولات، به کاتالوگ مراجعه کنید.</p>
+                    <a href="/weather_platform/products/catalog" class="btn btn-primary">📋 مشاهده محصولات</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% include "_footer.html" %}

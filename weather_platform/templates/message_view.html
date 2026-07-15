@@ -1,0 +1,68 @@
+<!-- web_based_programming_project/weather_platform/templates/message_view.html -->
+
+{% include "_header.html" %}
+
+{% include "_nav.html" %}
+
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-8">
+            <h1 class="text-3xl font-bold text-white text-center">👁️ مشاهده پیام</h1>
+            <p class="text-purple-100 text-center mt-2">پیام با شناسه {{message_id}}</p>
+        </div>
+
+        <!-- Message Details -->
+        <div class="p-8">
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-2">فرستنده</label>
+                    <div class="bg-gray-50 p-4 rounded-xl text-lg">{{name}}</div>
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-2">ایمیل</label>
+                    <div class="bg-gray-50 p-4 rounded-xl text-lg">{{email}}</div>
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-2">موضوع</label>
+                    <div class="bg-gray-50 p-4 rounded-xl text-lg">{{subject}}</div>
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-2">وضعیت</label>
+                    <div class="bg-gray-50 p-4 rounded-xl text-lg">
+                        {% if is_read %}
+                            <span class="text-green-600">✅ {{is_read_text}}</span>
+                        {% else %}
+                            <span class="text-yellow-600">📩 {{is_read_text}}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-2">تاریخ ارسال</label>
+                    <div class="bg-gray-50 p-4 rounded-xl text-lg">{{created_at}}</div>
+                </div>
+                <div>
+                    <label class="block text-gray-600 text-sm font-bold mb-2">متن پیام</label>
+                    <div class="bg-gray-50 p-4 rounded-xl text-lg whitespace-pre-wrap">{{message}}</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-8 flex gap-4">
+                <a href="/weather_platform/admin/messages"
+                   class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl text-center hover:bg-gray-400 transition-all duration-300 font-bold">
+                    📋 بازگشت به لیست
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="bg-blue-50 border-t border-blue-200 px-6 py-4">
+            <p class="text-blue-800 text-sm">
+                💡 این صفحه نمایش کامل پیام را نشان می‌دهد.
+            </p>
+        </div>
+    </div>
+</div>
+
+{% include "_footer.html" %}

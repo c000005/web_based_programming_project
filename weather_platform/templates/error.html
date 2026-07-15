@@ -1,0 +1,37 @@
+<!-- web_based_programming_project/weather_platform/templates/error.html -->
+
+{% include "_header.html" %}
+
+{% include "_nav.html" %}
+
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden text-center p-12 {{error_type}}">
+        <div class="text-8xl mb-6">{{icon}}</div>
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">{{status_code}}</h1>
+        <h2 class="text-2xl font-bold text-gray-600 mb-6">{{title}}</h2>
+        <p class="text-gray-500 mb-8">{{status_text}}</p>
+        {% if message %}
+            <p class="text-red-500 bg-red-50 p-4 rounded-xl mb-8">{{message}}</p>
+        {% endif %}
+        <a href="/weather_platform/dashboard"
+           class="inline-block px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-bold">
+            🏠 بازگشت به داشبورد
+        </a>
+    </div>
+</div>
+
+<style>
+    .error-404 .text-8xl { color: #f39c12; }
+    .error-403 .text-8xl { color: #e74c3c; }
+    .error-500 .text-8xl { color: #c0392b; }
+    .error-400 .text-8xl { color: #3498db; }
+    .error-405 .text-8xl { color: #95a5a6; }
+
+    .error-404 .text-4xl { color: #f39c12; }
+    .error-403 .text-4xl { color: #e74c3c; }
+    .error-500 .text-4xl { color: #c0392b; }
+    .error-400 .text-4xl { color: #3498db; }
+    .error-405 .text-4xl { color: #95a5a6; }
+</style>
+
+{% include "_footer.html" %}

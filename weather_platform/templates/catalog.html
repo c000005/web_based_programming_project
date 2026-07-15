@@ -35,9 +35,16 @@
     </div>
 </div>
 
+
+
 <!-- Products Grid -->
 <div class="product-grid" id="productsGrid">
     {{catalog_cards}}
+    <div class="actions">
+    <a href="/weather_platform/products/view/{{product['id']}}" class="btn btn-primary">👁️ مشاهده</a>
+    <a href="/weather_platform/cart/add/{{product['id']}}" class="btn btn-success" style="background: #10b981;">🛒 خرید</a>
+    <a href="/weather_platform/wishlist/add/{{product['id']}}" class="btn btn-pink" style="background: #ec4899;">❤️</a>
+</div>
 </div>
 
 <!-- Stats -->
