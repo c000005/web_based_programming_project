@@ -1,0 +1,186 @@
+# web_based_programming_project/weather_platform/controllers/base_controller.py
+
+import json
+import sqlite3
+from pathlib import Path
+import re
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def get_db_connection():
+    """Get database connection"""
+    db_path = BASE_DIR / "weather_platform.db"
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def render_template(filename, context=None):
+    """Render template with include support and variable substitution"""
+    template_path = BASE_DIR / "templates" / filename
+
+    if not template_path.exists():
+        return None
+
+    content = template_path.read_text(encoding="utf-8")
+
+    # Process includes recursively (max 5 levels deep)
+    for _ in range(5):
+        include_pattern = r'{%\s*include\s+"([^"]+)"\s*%}'
+        matches = re.findall(include_pattern, content)
+
+        if not matches:
+            break
+
+        for include_file in matches:
+            include_path = BASE_DIR / "templates" / include_file
+            if include_path.exists():
+                include_content = include_path.read_text(encoding="utf-8")
+                content = content.replace(f'{{% include "{include_file}" %}}', include_content)
+
+    # Process variables {{ variable }}
+    if context:
+        for key, value in context.items():
+            content = content.replace(f"{{{{ {key} }}}}", str(value))
+
+    # Remove any unprocessed variables
+    content = re.sub(r'{{\s*[^}]+?\s*}}', '', content)
+
+    return content
+
+
+def render_error_page(status_code, message=""):
+    """Render error pages for 400, 403, 404, 405, 500"""
+    status_messages = {
+        400: "Bad Request",
+        403: "Forbidden",
+        404: "Not Found",
+        405: "Method Not Allowed",
+        500: "Internal Server Error"
+    }
+
+    error_icons = {
+        400: "❌",
+        403: "⛔",
+        404: "🔍",
+        405: "🚫",
+        500: "💥"
+    }
+
+    error_titles = {
+        400: "درخواست نامعتبر",
+        403: "دسترسی ممنوع",
+        404: "صفحه یافت نشد",
+        405: "روش غیرمجاز",
+        500: "خطای سرور"
+    }
+
+    icon = error_icons.get(status_code, "⚠️")
+    title = error_titles.get(status_code, "خطا")
+    status_text = status_messages.get(status_code, "Error")
+
+    html = render_template("error.html", {
+        "title": title,
+        "status_code": status_code,
+        "status_text": status_text,
+        "icon": icon,
+        "message": message,
+        "error_type": f"error-{status_code}"
+    })
+
+    if html:
+        return html, status_code, {"Content-Type": "text/html; charset=utf-8"}
+
+    # Fallback if template not found
+    fallback_html = f"""
+    <!DOCTYPE html>
+    <html dir="rtl" lang="fa">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{title}</title>
+        <style>
+            body {{
+                font-family: 'Vazir', 'IRANSans', 'Tahoma', sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                padding: 20px;
+                direction: rtl;
+            }}
+            .error-container {{
+                background: white;
+                border-radius: 20px;
+                padding: 50px;
+                text-align: center;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+                max-width: 500px;
+                width: 100%;
+            }}
+            .error-icon {{
+                font-size: 80px;
+                margin-bottom: 20px;
+            }}
+            .error-title {{
+                font-size: 28px;
+                color: #333;
+                margin-bottom: 10px;
+            }}
+            .error-code {{
+                font-size: 72px;
+                font-weight: bold;
+                color: #e74c3c;
+                margin: 10px 0;
+            }}
+            .error-message {{
+                color: #666;
+                margin: 20px 0;
+                font-size: 16px;
+            }}
+            .btn-home {{
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                transition: all 0.3s;
+                margin-top: 10px;
+            }}
+            .btn-home:hover {{
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="error-container">
+            <div class="error-icon">{icon}</div>
+            <div class="error-code">{status_code}</div>
+            <h1 class="error-title">{title}</h1>
+            {f'<p class="error-message">{message}</p>' if message else ''}
+            <a href="/weather_platform/dashboard" class="btn-home">🏠 بازگشت به داشبورد</a>
+        </div>
+    </body>
+    </html>
+    """
+    return fallback_html, status_code, {"Content-Type": "text/html; charset=utf-8"}
+
+
+def parse_form_data(body):
+    """Parse application/x-www-form-urlencoded body"""
+    import urllib.parse
+    if not body:
+        return {}
+    if isinstance(body, bytes):
+        body = body.decode('utf-8')
+    return dict(urllib.parse.parse_qsl(body))
+
+
+def json_response(data, status=200):
+    """Return JSON response"""
+    return json.dumps(data, ensure_ascii=False), status, {"Content-Type": "application/json"}
