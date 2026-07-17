@@ -5,10 +5,10 @@ from .base_controller import render_template, render_error_page, get_db_connecti
 
 def handle_user_form():
     """Show new user form"""
-    html = render_template("user_form.html", {"title": "ثبت نام کاربر جدید"})
+    html = render_template("register.html", {"title": "ثبت نام کاربر جدید"})
     if html:
         return html, 200, {"Content-Type": "text/html; charset=utf-8"}
-    return render_error_page(500, "Template user_form.html not found")
+    return render_error_page(500, "Template register.html not found")
 
 
 def handle_user_edit_get(path):

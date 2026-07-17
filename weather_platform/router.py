@@ -1,4 +1,4 @@
-# weather_platform/router.py
+# web_based_programming_project/weather_platform/router.py
 
 import importlib.util
 from pathlib import Path
@@ -37,159 +37,176 @@ def run_db_setup():
 
 
 def route(path, method, body):
-    """Main routing function"""
+    """Main routing function using match case"""
 
-    # GET request handling
-    if method == "GET":
+    match method:
+        case "GET":
+            return handle_get_requests(path)
+        case "POST":
+            return handle_post_requests(path, body)
+        case _:
+            return render_error_page(405, "روش غیرمجاز")
 
+
+def handle_get_requests(path):
+    """Handle all GET requests using match case"""
+
+    match path:
         # Setup route
-        if path == "/setup":
+        case "/setup":
             result = run_db_setup()
             return f"<p>{result}</p>", 200, {"Content-Type": "text/html; charset=utf-8"}
 
-        # Home page
-        elif path == "/":
+        # Static pages
+        case "/":
             html = render_template("index.html", {"title": "پلتفرم هواشناسی"})
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template index.html not found")
 
-        # Contact page
-        elif path == "/contact":
-            html = render_template("contact.html", {"title": "تماس با ما"})
+        case "/contact":
+            html = render_template("message_form.html", {"title": "تماس با ما"})
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
-            return render_error_page(500, "Template contact.html not found")
+            return render_error_page(500, "Template message_form.html not found")
 
-        # About page
-        elif path == "/about":
+        case "/about":
             html = render_template("about.html", {"title": "درباره ما"})
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template about.html not found")
 
-        # Dashboard
-        elif path == "/dashboard":
+        case "/dashboard":
             html = render_template("dashboard.html", {"title": "داشبورد مدیریت"})
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template dashboard.html not found")
 
         # ========== Auth Routes ==========
-        elif path == "/register":
+        case "/register":
             return auth_controller.handle_register_get()
 
         # ========== Weather Routes ==========
-        elif path == "/add_weather":
+        case "/add_weather":
             return weather_controller.handle_add_weather_get()
-        elif path == "/weather/list":
+        case "/weather/list":
             return weather_controller.handle_weather_list()
 
         # ========== Product Routes ==========
-        elif path == "/products/new":
+        case "/products/new":
             return product_controller.handle_product_new_get()
-        elif path.startswith("/products/edit/"):
-            return product_controller.handle_product_edit_get(path)
-        elif path.startswith("/products/view/"):
-            return product_controller.handle_product_view(path)
-        elif path == "/products/list":
+        case "/products/list":
             return product_controller.handle_products_list()
-        elif path == "/products/catalog":
+        case "/products/catalog":
             return product_controller.handle_products_catalog()
 
         # ========== Message Routes ==========
-        elif path == "/messages/new":
+        case "/messages/new":
             return message_controller.handle_message_form()
-        elif path.startswith("/messages/view/"):
-            return message_controller.handle_message_view(path)
-        elif path == "/admin/messages":
+        case "/admin/messages":
             return message_controller.handle_messages_list()
 
         # ========== User Routes ==========
-        elif path == "/users/new":
+        case "/users/new":
             return user_controller.handle_user_form()
-        elif path.startswith("/admin/users/edit/"):
-            return user_controller.handle_user_edit_get(path)
-        elif path == "/admin/users":
+        case "/admin/users":
             return user_controller.handle_users_list()
 
         # ========== Report Routes ==========
-        elif path == "/reports/list":
+        case "/reports/list":
             return report_controller.handle_reports_list()
 
         # ========== Cart Routes ==========
-        elif path == "/cart":
+        case "/cart":
             return cart_controller.handle_cart_view()
-        elif path.startswith("/cart/add/"):
-            return cart_controller.handle_cart_add(path)
-        elif path.startswith("/cart/remove/"):
-            return cart_controller.handle_cart_remove(path)
 
         # ========== Wishlist Routes ==========
-        elif path == "/wishlist":
+        case "/wishlist":
             return wishlist_controller.handle_wishlist_view()
-        elif path.startswith("/wishlist/add/"):
-            return wishlist_controller.handle_wishlist_add(path)
-        elif path.startswith("/wishlist/remove/"):
-            return wishlist_controller.handle_wishlist_remove(path)
-
-        # ========== Comment Routes ==========
-        # Note: Comments are handled within product view page
 
         # ========== API Routes ==========
-        elif path == "/api/status":
+        case "/api/status":
             data = {"project": "weather_platform", "status": "ok"}
             return json_response(data)
 
-        # 404
-        else:
+        # ========== Dynamic Routes with Path Parameters ==========
+        # Product dynamic routes
+        case path if path.startswith("/products/edit/"):
+            return product_controller.handle_product_edit_get(path)
+        case path if path.startswith("/products/view/"):
+            return product_controller.handle_product_view(path)
+
+        # Message dynamic routes
+        case path if path.startswith("/messages/view/"):
+            return message_controller.handle_message_view(path)
+
+        # User dynamic routes
+        case path if path.startswith("/admin/users/edit/"):
+            return user_controller.handle_user_edit_get(path)
+
+        # Cart dynamic routes (GET for add/remove)
+        case path if path.startswith("/cart/add/"):
+            return cart_controller.handle_cart_add(path)
+        case path if path.startswith("/cart/remove/"):
+            return cart_controller.handle_cart_remove(path)
+
+        # Wishlist dynamic routes (GET for add/remove)
+        case path if path.startswith("/wishlist/add/"):
+            return wishlist_controller.handle_wishlist_add(path)
+        case path if path.startswith("/wishlist/remove/"):
+            return wishlist_controller.handle_wishlist_remove(path)
+
+        # 404 - Page not found
+        case _:
             return render_error_page(404, f"صفحه {path} یافت نشد")
 
-    # POST request handling
-    elif method == "POST":
+
+def handle_post_requests(path, body):
+    """Handle all POST requests using match case"""
+
+    match path:
         # ========== Auth Routes ==========
-        if path == "/register":
+        case "/register":
             return auth_controller.handle_register_post(body)
 
         # ========== Weather Routes ==========
-        elif path == "/add_weather":
+        case "/add_weather":
             return weather_controller.handle_add_weather_post(body)
 
         # ========== Product Routes ==========
-        elif path == "/products/new":
+        case "/products/new":
             return product_controller.handle_product_new_post(body)
-        elif path.startswith("/products/edit/"):
-            return product_controller.handle_product_edit_post(path, body)
 
         # ========== Message Routes ==========
-        elif path == "/messages/new":
+        case "/messages/new":
             return message_controller.handle_message_new_post(body)
 
-        # ========== User Routes ==========
-        elif path.startswith("/admin/users/edit/"):
+        # ========== Product Dynamic Routes ==========
+        case path if path.startswith("/products/edit/"):
+            return product_controller.handle_product_edit_post(path, body)
+
+        # ========== User Dynamic Routes ==========
+        case path if path.startswith("/admin/users/edit/"):
             return user_controller.handle_user_edit_post(path, body)
 
-        # ========== Cart Routes ==========
-        elif path.startswith("/cart/add/"):
+        # ========== Cart Dynamic Routes ==========
+        case path if path.startswith("/cart/add/"):
             return cart_controller.handle_cart_add(path)
-        elif path.startswith("/cart/update/"):
+        case path if path.startswith("/cart/update/"):
             return cart_controller.handle_cart_update(path, body)
-        elif path.startswith("/cart/remove/"):
+        case path if path.startswith("/cart/remove/"):
             return cart_controller.handle_cart_remove(path)
 
-        # ========== Wishlist Routes ==========
-        elif path.startswith("/wishlist/add/"):
+        # ========== Wishlist Dynamic Routes ==========
+        case path if path.startswith("/wishlist/add/"):
             return wishlist_controller.handle_wishlist_add(path)
-        elif path.startswith("/wishlist/remove/"):
+        case path if path.startswith("/wishlist/remove/"):
             return wishlist_controller.handle_wishlist_remove(path)
 
         # ========== Comment Routes ==========
-        elif path.startswith("/products/comment/"):
+        case path if path.startswith("/products/comment/"):
             return comment_controller.handle_comment_add(path, body)
 
         # 404 for POST
-        else:
+        case _:
             return render_error_page(404, f"صفحه {path} یافت نشد")
-
-    # Method not allowed
-    return render_error_page(405, "روش غیرمجاز")
