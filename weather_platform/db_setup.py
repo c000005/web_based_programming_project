@@ -3,59 +3,58 @@
 import sqlite3
 import os
 from pathlib import Path
-
-DATABASE_FILE = 'weather_platform.db'
-BASE_DIR = Path(__file__).resolve().parent
-DATABASE_PATH = BASE_DIR / DATABASE_FILE
+import settings
 
 
 def setup_database():
     """Create database with all tables if not exists"""
-    if not os.path.exists(DATABASE_PATH):
-        print(f"[*] Creating database: {DATABASE_FILE}")
-        conn = sqlite3.connect(DATABASE_PATH)
+    if not os.path.exists(settings.DB_PATH):
+        print(f"[*] Creating database: {settings.DB_NAME}")
+        conn = sqlite3.connect(settings.DB_PATH)
         cursor = conn.cursor()
 
         # 1. users table
         cursor.execute('''
-                       CREATE TABLE IF NOT EXISTS users
+                       CREATE TABLE IF NOT EXISTS users (
+                           id INTEGER PRIMARY KEY AUTOINCREMENT,
+                           username TEXT UNIQUE NOT NULL,
+                           password_hash TEXT NOT NULL,
+                           email TEXT UNIQUE NOT NULL,
+                           full_name TEXT,
+                           role TEXT DEFAULT 'viewer',
+                           is_active BOOLEAN DEFAULT 1,
+                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           last_login TIMESTAMP
+                       )
+                       ''')
+
+        # 2. Sessions table
+        cursor.execute('''
+                       CREATE TABLE IF NOT EXISTS sessions
                        (
                            id
-                           INTEGER
+                           TEXT
                            PRIMARY
-                           KEY
-                           AUTOINCREMENT,
-                           username
-                           TEXT
-                           UNIQUE
+                           KEY,
+                           user_id
+                           INTEGER
                            NOT
                            NULL,
-                           password_hash
-                           TEXT
-                           NOT
-                           NULL,
-                           email
-                           TEXT
-                           UNIQUE
-                           NOT
-                           NULL,
-                           full_name
-                           TEXT,
-                           role
-                           TEXT
-                           DEFAULT
-                           'viewer',
-                           is_active
-                           BOOLEAN
-                           DEFAULT
-                           1,
                            created_at
                            TIMESTAMP
                            DEFAULT
                            CURRENT_TIMESTAMP,
-                           last_login
-                           TIMESTAMP
+                           expires_at
+                           TIMESTAMP,
+                           FOREIGN
+                           KEY
+                       (
+                           user_id
+                       ) REFERENCES users
+                       (
+                           id
                        )
+                           )
                        ''')
 
         # 2. weather_data table
@@ -472,11 +471,11 @@ def setup_database():
         print("    - product_comments (NEW)")  # جدید
 
     else:
-        print(f"[!] Database {DATABASE_FILE} already exists.")
+        print(f"[!] Database {settings.DB_NAME} already exists.")
 
         # امکان اضافه کردن جداول جدید به دیتابیس موجود
         print("[*] Checking for new tables...")
-        conn = sqlite3.connect(DATABASE_PATH)
+        conn = sqlite3.connect(settings.DB_PATH)
         cursor = conn.cursor()
 
         # بررسی و اضافه کردن جدول cart_items اگر وجود ندارد

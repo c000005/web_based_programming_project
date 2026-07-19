@@ -1,13 +1,23 @@
 # web_based_programming_project/weather_platform/controllers/comment_controller.py
 
 from .base_controller import render_error_page, get_db_connection, parse_form_data
+from .auth_controller import get_current_user_from_headers
 
 
-def handle_comment_add(path, body):
+def get_user_id_from_headers(headers):
+    """Get user ID from headers"""
+    user = get_current_user_from_headers(headers)
+    return user['id'] if user else None
+
+
+def handle_comment_add(path, body, headers):
     """Add comment for product"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای ثبت نظر وارد شوید.")
+
     try:
         product_id = int(path.split("/")[-1])
-        user_id = 1  # Current active user
         form_data = parse_form_data(body)
         comment = form_data.get('comment', '').strip()
         rating = form_data.get('rating', 3)

@@ -8,8 +8,16 @@
     <a href="/weather_platform/weather/list">🌤 هواشناسی</a>
     <a href="/weather_platform/reports/list">📊 گزارش‌ها</a>
     <a href="/weather_platform/products/catalog">🛍 کاتالوگ</a>
-    <a href="/weather_platform/register">👤 ثبت نام</a>
-    <a href="/weather_platform/contact">📞 تماس با ما</a>
     <a href="/weather_platform/products/new">➕ افزودن محصول</a>
     <a href="/weather_platform/add_weather">➕ ثبت داده جدید</a>
+    <a href="/weather_platform/contact">📞 تماس با ما</a>
+    <a href="/weather_platform/about">ℹ️ درباره ما</a>
+
+    {% if user %}
+        <span class="text-green-600 font-bold">👤 {{ user.full_name or user.username }}</span>
+        <a href="/weather_platform/logout" class="text-red-600 hover:bg-red-600 hover:text-white">🚪 خروج</a>
+    {% else %}
+        <a href="/weather_platform/login" class="text-blue-600 hover:bg-blue-600 hover:text-white">🔐 ورود</a>
+        <a href="/weather_platform/register" class="text-green-600 hover:bg-green-600 hover:text-white">📝 ثبت نام</a>
+    {% endif %}
 </div>

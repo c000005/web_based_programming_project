@@ -1,15 +1,13 @@
-# web_based_programming_project/web_server.py
-
+# project2/web_server.py
 import os
 import importlib.util
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 from pathlib import Path
 import sys
 
 BASE_DIR = Path(__file__).resolve().parent
-
-projects = {}  # project_name -> router_module
+projects = {}
 
 
 def load_router(module_path):
@@ -26,7 +24,7 @@ def auto_load_projects():
     for item in BASE_DIR.iterdir():
         if not item.is_dir():
             continue
-        if item.name in ["__pycache__", "venv"]:
+        if item.name in ["__pycache__", "venv", ".git"]:
             continue
         router_file = item / "router.py"
         if not router_file.exists():
@@ -61,11 +59,9 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         # Check if it's a static file request for a project
         if len(parts) >= 2 and parts[0] in projects:
-            # Check if it's a static file request
             if len(parts) >= 3 and parts[1] == "static":
-                # Serve static file from the project
+                # Serve static file
                 project_name = parts[0]
-                # Get the rest of the path after /project_name/static/
                 static_path = "/".join(parts[2:])
                 project_dir = BASE_DIR / project_name
                 file_path = project_dir / "static" / static_path
@@ -91,12 +87,6 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(content)
                     return
-                else:
-                    self.send_response(404)
-                    self.send_header('Content-type', 'text/plain')
-                    self.end_headers()
-                    self.wfile.write(f"File not found: {static_path}".encode('utf-8'))
-                    return
 
         # Regular route handling
         if not parts or parts == ['']:
@@ -109,14 +99,20 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         inner_path = "/" + "/".join(parts[1:]) if len(parts) > 1 else "/"
 
-        # Read POST body if needed
+        # Read POST body
         body = None
         if method == "POST":
             length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(length) if length > 0 else b""
+            # Parse form data
+            if body:
+                body = parse_qs(body.decode('utf-8'))
+
+        # Get headers
+        headers = dict(self.headers)
 
         try:
-            result = projects[project].route(inner_path, method, body)
+            result = projects[project].route(inner_path, method, body, headers)
 
             if isinstance(result, tuple):
                 if len(result) == 3:
@@ -149,7 +145,7 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
             self.send_not_found(f"Router error: {e}")
 
     def show_home(self):
-        html = "<h1>Multi-Project Python Server (No Framework)</h1><ul>"
+        html = "<h1>Multi-Project Python Server</h1><ul>"
         for name in projects.keys():
             html += f"<li><a href='/{name}'>{name}</a></li>"
         html += "</ul>"

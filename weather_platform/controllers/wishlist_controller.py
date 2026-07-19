@@ -1,12 +1,22 @@
 # web_based_programming_project/weather_platform/controllers/wishlist_controller.py
 
 from .base_controller import render_template, render_error_page, get_db_connection
+from .auth_controller import get_current_user_from_headers
 
 
-def handle_wishlist_view():
+def get_user_id_from_headers(headers):
+    """Get user ID from headers"""
+    user = get_current_user_from_headers(headers)
+    return user['id'] if user else None
+
+
+def handle_wishlist_view(headers):
     """View wishlist"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای مشاهده علاقمندی‌ها وارد شوید.")
+
     try:
-        user_id = 1  # Current active user
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -35,17 +45,17 @@ def handle_wishlist_view():
                 category_icon = "📊"
 
             wishlist_cards += f'''
-            <div class="wishlist-card">
-                <div class="flex items-center justify-between p-4 border-b">
+            <div class="wishlist-card bg-white rounded-xl shadow-md p-4 mb-4">
+                <div class="flex items-center justify-between border-b pb-3">
                     <div>
                         <h3 class="font-bold text-lg">{item['product_name']}</h3>
                         <span class="text-sm text-gray-600">{category_icon} {item['category'] or 'سایر'}</span>
                     </div>
                     <div class="text-lg font-bold text-green-600">{price_display} تومان</div>
                 </div>
-                <div class="p-4">
+                <div class="pt-3">
                     <p class="text-gray-600 text-sm">{item['description'] or 'توضیحی ثبت نشده است'}</p>
-                    <div class="mt-4 flex gap-2">
+                    <div class="mt-4 flex gap-2 flex-wrap">
                         <a href="/weather_platform/products/view/{item['product_id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
                         <a href="/weather_platform/cart/add/{item['product_id']}" class="btn btn-sm btn-success">🛒 افزودن به سبد</a>
                         <a href="/weather_platform/wishlist/remove/{item['wish_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم از علاقمندی‌ها اطمینان دارید؟')">❤️ حذف</a>
@@ -68,11 +78,14 @@ def handle_wishlist_view():
         return render_error_page(500, f"خطا در دریافت علاقمندی‌ها: {e}")
 
 
-def handle_wishlist_add(path):
+def handle_wishlist_add(path, headers):
     """Add item to wishlist"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای افزودن به علاقمندی‌ها وارد شوید.")
+
     try:
         product_id = int(path.split("/")[-1])
-        user_id = 1
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -105,14 +118,18 @@ def handle_wishlist_add(path):
         return render_error_page(500, f"خطا در افزودن به علاقمندی‌ها: {e}")
 
 
-def handle_wishlist_remove(path):
+def handle_wishlist_remove(path, headers):
     """Remove item from wishlist"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای حذف از علاقمندی‌ها وارد شوید.")
+
     try:
         wish_id = int(path.split("/")[-1])
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM wishlist_items WHERE id = ? AND user_id = 1', (wish_id,))
+        cursor.execute('DELETE FROM wishlist_items WHERE id = ? AND user_id = ?', (wish_id, user_id))
 
         if cursor.rowcount == 0:
             conn.close()

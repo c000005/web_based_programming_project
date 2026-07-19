@@ -1,12 +1,23 @@
 # web_based_programming_project/weather_platform/controllers/cart_controller.py
 
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
+from core.permissions import has_permission, is_admin
+from .auth_controller import get_current_user_from_headers
 
 
-def handle_cart_view():
+def get_user_id_from_headers(headers):
+    """Get user ID from headers"""
+    user = get_current_user_from_headers(headers)
+    return user['id'] if user else None
+
+
+def handle_cart_view(headers):
     """View shopping cart"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای مشاهده سبد خرید وارد شوید.")
+
     try:
-        user_id = 1  # Current active user
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -62,11 +73,14 @@ def handle_cart_view():
         return render_error_page(500, f"خطا در دریافت سبد خرید: {e}")
 
 
-def handle_cart_add(path):
+def handle_cart_add(path, headers):
     """Add item to cart"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای افزودن به سبد خرید وارد شوید.")
+
     try:
         product_id = int(path.split("/")[-1])
-        user_id = 1
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -104,8 +118,12 @@ def handle_cart_add(path):
         return render_error_page(500, f"خطا در افزودن به سبد خرید: {e}")
 
 
-def handle_cart_update(path, body):
+def handle_cart_update(path, body, headers):
     """Update cart item quantity"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای بروزرسانی سبد خرید وارد شوید.")
+
     try:
         cart_id = int(path.split("/")[-1])
         form_data = parse_form_data(body)
@@ -121,8 +139,8 @@ def handle_cart_update(path, body):
         cursor.execute('''
                        UPDATE cart_items
                        SET quantity = ?
-                       WHERE id = ? AND user_id = 1
-                       ''', (quantity, cart_id))
+                       WHERE id = ? AND user_id = ?
+                       ''', (quantity, cart_id, user_id))
 
         if cursor.rowcount == 0:
             conn.close()
@@ -145,14 +163,18 @@ def handle_cart_update(path, body):
         return render_error_page(500, f"خطا در بروزرسانی سبد خرید: {e}")
 
 
-def handle_cart_remove(path):
+def handle_cart_remove(path, headers):
     """Remove item from cart"""
+    user_id = get_user_id_from_headers(headers)
+    if not user_id:
+        return render_error_page(401, "لطفاً برای حذف از سبد خرید وارد شوید.")
+
     try:
         cart_id = int(path.split("/")[-1])
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM cart_items WHERE id = ? AND user_id = 1', (cart_id,))
+        cursor.execute('DELETE FROM cart_items WHERE id = ? AND user_id = ?', (cart_id, user_id))
 
         if cursor.rowcount == 0:
             conn.close()
