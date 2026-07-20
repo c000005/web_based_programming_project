@@ -4,6 +4,7 @@ import json
 import sqlite3
 from pathlib import Path
 import re
+import html
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,7 +18,13 @@ def get_db_connection():
 
 
 def render_template(filename, context=None):
-    """Render template with include support and variable substitution"""
+    """
+    Render template with support for:
+    - {% include "file.html" %} - include other templates
+    - {{ variable }} - variable substitution
+    - {% if condition %} ... {% endif %} - simple conditionals
+    - {% for item in items %} ... {% endfor %} - simple loops
+    """
     template_path = BASE_DIR / "templates" / filename
 
     if not template_path.exists():
@@ -25,7 +32,7 @@ def render_template(filename, context=None):
 
     content = template_path.read_text(encoding="utf-8")
 
-    # Process includes recursively (max 5 levels deep)
+    # Process includes recursively
     for _ in range(5):
         include_pattern = r'{%\s*include\s+"([^"]+)"\s*%}'
         matches = re.findall(include_pattern, content)
@@ -39,12 +46,62 @@ def render_template(filename, context=None):
                 include_content = include_path.read_text(encoding="utf-8")
                 content = content.replace(f'{{% include "{include_file}" %}}', include_content)
 
-    # Process variables {{ variable }}
+    # Process {% if condition %} ... {% endif %}
     if context:
-        for key, value in context.items():
-            content = content.replace(f"{{{{ {key} }}}}", str(value))
+        # Process if statements
+        if_pattern = r'{%\s*if\s+([^%]+)%}(.*?){%\s*endif\s*%}'
+        matches = re.findall(if_pattern, content, re.DOTALL)
 
-    # Remove any unprocessed variables
+        for condition, block in matches:
+            condition = condition.strip()
+            # Evaluate condition
+            if condition in context:
+                value = context[condition]
+                if value:
+                    content = content.replace(f'{{% if {condition} %}}{block}{{% endif %}}', block)
+                else:
+                    content = content.replace(f'{{% if {condition} %}}{block}{{% endif %}}', '')
+            else:
+                # If condition variable doesn't exist, remove the block
+                content = content.replace(f'{{% if {condition} %}}{block}{{% endif %}}', '')
+
+        # Process for loops: {% for item in items %} ... {% endfor %}
+        for_pattern = r'{%\s*for\s+(\w+)\s+in\s+(\w+)\s*%}(.*?){%\s*endfor\s*%}'
+        matches = re.findall(for_pattern, content, re.DOTALL)
+
+        for item_var, list_var, block in matches:
+            if list_var in context and isinstance(context[list_var], (list, tuple)):
+                items = context[list_var]
+                result = ""
+                for item in items:
+                    # Create a context with the item
+                    item_context = context.copy()
+                    if isinstance(item, dict):
+                        # If item is a dict, merge its keys into context
+                        item_context.update(item)
+                    item_context[item_var] = item
+
+                    # Process the block with the item context
+                    block_content = block
+                    for key, value in item_context.items():
+                        block_content = block_content.replace(f"{{{{ {key} }}}}", str(value))
+                    result += block_content
+                content = content.replace(f'{{% for {item_var} in {list_var} %}}{block}{{% endfor %}}', result)
+            else:
+                # If list doesn't exist, remove the block
+                content = content.replace(f'{{% for {item_var} in {list_var} %}}{block}{{% endfor %}}', '')
+
+        # Process simple variables {{ variable }}
+        for key, value in context.items():
+            # Don't replace complex objects, only strings and basic types
+            if isinstance(value, (str, int, float, bool)):
+                content = content.replace(f"{{{{ {key} }}}}", str(value))
+            elif value is None:
+                content = content.replace(f"{{{{ {key} }}}}", '')
+            # For dict values, they will be handled in the loop context
+
+    # Remove any unprocessed template tags (cleanup)
+    content = re.sub(r'{%\s*[^%]+?\s*%}', '', content)
     content = re.sub(r'{{\s*[^}]+?\s*}}', '', content)
 
     return content
@@ -172,13 +229,32 @@ def render_error_page(status_code, message=""):
 
 
 def parse_form_data(body):
-    """Parse application/x-www-form-urlencoded body"""
+    """
+    Parse application/x-www-form-urlencoded body
+    Handles both bytes and string input
+    """
     import urllib.parse
+
     if not body:
         return {}
+
+    # If body is already a dict, return it
+    if isinstance(body, dict):
+        return body
+
+    # If body is bytes, decode and parse
     if isinstance(body, bytes):
-        body = body.decode('utf-8')
-    return dict(urllib.parse.parse_qsl(body))
+        try:
+            body_str = body.decode('utf-8')
+        except UnicodeDecodeError:
+            return {}
+    elif isinstance(body, str):
+        body_str = body
+    else:
+        return {}
+
+    # Parse the query string
+    return dict(urllib.parse.parse_qsl(body_str))
 
 
 def json_response(data, status=200):

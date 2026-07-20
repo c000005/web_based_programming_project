@@ -104,7 +104,7 @@ def handle_get_requests(path, headers):
         case "/add_weather":
             return weather_controller.handle_add_weather_get(headers)
         case "/weather/list":
-            return weather_controller.handle_weather_list(headers)
+            return weather_controller.handle_weather_list()
 
         # ========== Product Routes ==========
         case "/products/new":
@@ -117,18 +117,22 @@ def handle_get_requests(path, headers):
         # ========== Message Routes ==========
         case "/messages/new":
             return message_controller.handle_message_form(headers)
+        case "/messages/list":
+            return message_controller.handle_messages_list()
         case "/admin/messages":
-            return message_controller.handle_messages_list(headers)
+            return message_controller.handle_messages_list()
 
         # ========== User Routes ==========
         case "/users/new":
             return user_controller.handle_user_form(headers)
+        case "/users/list":
+            return user_controller.handle_users_list()
         case "/admin/users":
             return user_controller.handle_users_list(headers)
 
         # ========== Report Routes ==========
         case "/reports/list":
-            return report_controller.handle_reports_list(headers)
+            return report_controller.handle_reports_list()
 
         # ========== Cart Routes ==========
         case "/cart":

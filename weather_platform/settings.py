@@ -11,5 +11,5 @@ DB_PATH = BASE_DIR / DB_NAME
 
 TEMPLATE_DIR = BASE_DIR / "templates"
 
-STATIC_DIR = BASE_DIR / "static"
+STATIC_DIR = BASE_DIR / "weather_platform/static"
 STATIC_URL_PREFIX = "/static/" # URL prefix for static files

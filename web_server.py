@@ -1,10 +1,11 @@
-# project2/web_server.py
+# web_based_programming_project/web_server.py
 import os
 import importlib.util
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 from pathlib import Path
 import sys
+import mimetypes
 
 BASE_DIR = Path(__file__).resolve().parent
 projects = {}
@@ -60,32 +61,19 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         # Check if it's a static file request for a project
         if len(parts) >= 2 and parts[0] in projects:
             if len(parts) >= 3 and parts[1] == "static":
-                # Serve static file
-                project_name = parts[0]
-                static_path = "/".join(parts[2:])
-                project_dir = BASE_DIR / project_name
-                file_path = project_dir / "static" / static_path
-
-                if file_path.exists() and file_path.is_file():
-                    content = file_path.read_bytes()
-                    ext = file_path.suffix.lower()
-                    content_types = {
-                        '.css': 'text/css',
-                        '.js': 'application/javascript',
-                        '.png': 'image/png',
-                        '.jpg': 'image/jpeg',
-                        '.jpeg': 'image/jpeg',
-                        '.gif': 'image/gif',
-                        '.svg': 'image/svg+xml',
-                        '.ico': 'image/x-icon',
-                        '.html': 'text/html',
-                        '.txt': 'text/plain',
-                    }
-                    content_type = content_types.get(ext, 'application/octet-stream')
+                import mimetypes
+                static_path = BASE_DIR / parts[0] / "static" / "/".join(parts[2:])
+                if static_path.exists() and static_path.is_file():
+                    content_type, _ = mimetypes.guess_type(static_path)
+                    if content_type is None:
+                        content_type = "application/octet-stream"
                     self.send_response(200)
                     self.send_header('Content-type', content_type)
                     self.end_headers()
-                    self.wfile.write(content)
+                    self.wfile.write(static_path.read_bytes())
+                    return
+                else:
+                    self.send_not_found(f"Static file not found")
                     return
 
         # Regular route handling
@@ -99,16 +87,13 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         inner_path = "/" + "/".join(parts[1:]) if len(parts) > 1 else "/"
 
-        # Read POST body
+        # Read POST body - DO NOT parse here, just pass raw bytes
         body = None
         if method == "POST":
             length = int(self.headers.get('Content-Length', 0))
-            body = self.rfile.read(length) if length > 0 else b""
-            # Parse form data
-            if body:
-                body = parse_qs(body.decode('utf-8'))
+            body = self.rfile.read(length) if length > 0 else b""  # Keep as bytes
 
-        # Get headers
+        # Get headers (including cookies)
         headers = dict(self.headers)
 
         try:

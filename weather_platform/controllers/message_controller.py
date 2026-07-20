@@ -3,7 +3,7 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_message_form():
+def handle_message_form(headers):
     """Show new message form"""
     html = render_template("message_form.html", {"title": "ارسال پیام جدید"})
     if html:

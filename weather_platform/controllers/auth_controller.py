@@ -7,7 +7,7 @@ from .base_controller import render_template, render_error_page, parse_form_data
 
 def handle_login_get():
     """Show login form"""
-    html = render_template("login.html", {"title": "ورود به سیستم"})
+    html = render_template("login.html", {"title": "ورود به سیستم", "error": None})
     if html:
         return html, 200, {"Content-Type": "text/html; charset=utf-8"}
     return render_error_page(500, "Template login.html not found")
@@ -15,7 +15,12 @@ def handle_login_get():
 
 def handle_login_post(body):
     """Handle user login"""
-    form_data = parse_form_data(body)
+    # body could be bytes or dict depending on how it's passed
+    if isinstance(body, dict):
+        form_data = body
+    else:
+        form_data = parse_form_data(body)
+
     username = form_data.get('username', '').strip()
     password = form_data.get('password', '').strip()
 
@@ -39,7 +44,7 @@ def handle_login_post(body):
     if not user:
         html = render_template("login.html", {
             "title": "ورود به سیستم",
-            "error": "نام کاربری یا رمز عبور اشتباه است."
+            "error": "نام کاربری یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید."
         })
         return html, 401, {"Content-Type": "text/html; charset=utf-8"}
 
@@ -52,14 +57,16 @@ def handle_login_post(body):
 
     # Create session
     session_id = auth.create_session(user['id'])
-    headers = cookie.set_cookie('session_id', session_id, max_age=86400)  # 1 day
+    headers = cookie.set_cookie('session_id', session_id, max_age=86400)
 
-    # Redirect to dashboard
+    # Return success with redirect
     return """
-    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-        ✅ ورود با موفقیت انجام شد. خوش آمدید {}!
-        <br>
-        <a href="/weather_platform/dashboard" class="text-green-800 underline">رفتن به داشبورد</a>
+    <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div style="color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <h2>✅ ورود موفق!</h2>
+            <p>خوش آمدید {}</p>
+        </div>
+        <a href="/weather_platform/dashboard" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">رفتن به داشبورد</a>
     </div>
     """.format(user['full_name'] or user['username']), 200, {**headers, "Content-Type": "text/html; charset=utf-8"}
 
@@ -80,10 +87,12 @@ def handle_logout(headers):
 
     headers = cookie.clear_cookie('session_id')
     return """
-    <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-xl mb-4">
-        👋 شما با موفقیت خارج شدید.
-        <br>
-        <a href="/weather_platform/login" class="text-blue-800 underline">ورود مجدد</a>
+    <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div style="color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <h2>👋 خروج موفق</h2>
+            <p>شما با موفقیت خارج شدید.</p>
+        </div>
+        <a href="/weather_platform/login" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">ورود مجدد</a>
     </div>
     """, 200, {**headers, "Content-Type": "text/html; charset=utf-8"}
 
@@ -102,3 +111,44 @@ def get_current_user_from_headers(headers):
         return None
 
     return auth.get_user_by_session(session_id)
+
+
+def handle_register_post(body):
+    """Handle user registration"""
+    # body could be bytes or dict depending on how it's passed
+    if isinstance(body, dict):
+        form_data = body
+    else:
+        form_data = parse_form_data(body)
+
+    username = form_data.get('username', '').strip()
+    email = form_data.get('email', '').strip()
+    password = form_data.get('password', '').strip()
+    role = form_data.get('role', 'viewer')
+
+    if not username or not email or not password:
+        return render_error_page(400, "همه فیلدها الزامی هستند")
+
+    try:
+        conn = sqlite3.connect(settings.DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('''
+                       INSERT INTO users (username, email, password_hash, role)
+                       VALUES (?, ?, ?, ?)
+                       ''', (username, email, password, role))
+        conn.commit()
+        conn.close()
+
+        return """
+        <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div style="color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <h2>✅ ثبت‌نام موفق!</h2>
+                <p>کاربر {} با موفقیت ثبت شد.</p>
+            </div>
+            <a href="/weather_platform/login" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">ورود به سیستم</a>
+        </div>
+        """.format(username), 200, {"Content-Type": "text/html; charset=utf-8"}
+    except sqlite3.IntegrityError:
+        return render_error_page(400, "نام کاربری یا ایمیل قبلاً ثبت شده است")
+    except Exception as e:
+        return render_error_page(500, f"خطا در ثبت‌نام: {e}")

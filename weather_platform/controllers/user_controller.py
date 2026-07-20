@@ -3,7 +3,7 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_user_form():
+def handle_user_form(headers):
     """Show new user form"""
     html = render_template("register.html", {"title": "ثبت نام کاربر جدید"})
     if html:
@@ -11,7 +11,7 @@ def handle_user_form():
     return render_error_page(500, "Template register.html not found")
 
 
-def handle_user_edit_get(path):
+def handle_user_edit_get(path, headers):
     """Show edit user form"""
     try:
         user_id = int(path.split("/")[-1])
@@ -44,7 +44,7 @@ def handle_user_edit_get(path):
         return render_error_page(500, f"خطا در دریافت کاربر: {e}")
 
 
-def handle_user_edit_post(path, body):
+def handle_user_edit_post(path, body, headers):
     """Process user edit"""
     try:
         user_id = int(path.split("/")[-1])
@@ -74,7 +74,7 @@ def handle_user_edit_post(path, body):
 
         conn.commit()
         conn.close()
-        return "<p style='color:green'>✅ User updated successfully!</p>", 200, {
+        return '<p style="color:green">✅ User updated successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except ValueError:
         return render_error_page(400, "شناسه نامعتبر")
@@ -82,7 +82,7 @@ def handle_user_edit_post(path, body):
         return render_error_page(500, f"خطا در بروزرسانی کاربر: {e}")
 
 
-def handle_users_list():
+def handle_users_list(headers):
     """Show users list"""
     try:
         conn = get_db_connection()
