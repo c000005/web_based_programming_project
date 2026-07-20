@@ -7,6 +7,7 @@ import re
 import html
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATE_DIR = BASE_DIR / "templates"
 
 
 def get_db_connection():
@@ -25,7 +26,7 @@ def render_template(filename, context=None):
     - {% if condition %} ... {% endif %} - simple conditionals
     - {% for item in items %} ... {% endfor %} - simple loops
     """
-    template_path = BASE_DIR / "templates" / filename
+    template_path = TEMPLATE_DIR / filename
 
     if not template_path.exists():
         return None
@@ -41,7 +42,7 @@ def render_template(filename, context=None):
             break
 
         for include_file in matches:
-            include_path = BASE_DIR / "templates" / include_file
+            include_path = TEMPLATE_DIR / include_file
             if include_path.exists():
                 include_content = include_path.read_text(encoding="utf-8")
                 content = content.replace(f'{{% include "{include_file}" %}}', include_content)
@@ -84,7 +85,8 @@ def render_template(filename, context=None):
                     # Process the block with the item context
                     block_content = block
                     for key, value in item_context.items():
-                        block_content = block_content.replace(f"{{{{ {key} }}}}", str(value))
+                        if isinstance(value, (str, int, float, bool)):
+                            block_content = block_content.replace(f"{{{{ {key} }}}}", str(value))
                     result += block_content
                 content = content.replace(f'{{% for {item_var} in {list_var} %}}{block}{{% endfor %}}', result)
             else:
@@ -98,7 +100,6 @@ def render_template(filename, context=None):
                 content = content.replace(f"{{{{ {key} }}}}", str(value))
             elif value is None:
                 content = content.replace(f"{{{{ {key} }}}}", '')
-            # For dict values, they will be handled in the loop context
 
     # Remove any unprocessed template tags (cleanup)
     content = re.sub(r'{%\s*[^%]+?\s*%}', '', content)

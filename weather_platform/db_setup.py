@@ -280,6 +280,10 @@ def setup_database():
                            BOOLEAN
                            DEFAULT
                            1,
+                           is_deleted
+                           BOOLEAN
+                           DEFAULT
+                           0,
                            created_at
                            TIMESTAMP
                            DEFAULT

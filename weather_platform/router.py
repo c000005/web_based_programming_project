@@ -96,9 +96,12 @@ def handle_get_requests(path, headers):
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template dashboard.html not found")
 
-        # ========== Register Route ==========
+        # Register Route
         case "/register":
-            return auth_controller.handle_login_get()  # Or keep register form separately
+            html = render_template("register.html", {"title": "ثبت نام کاربر جدید"})
+            if html:
+                return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+            return render_error_page(500, "Template register.html not found")
 
         # ========== Weather Routes ==========
         case "/add_weather":

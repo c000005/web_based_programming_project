@@ -61,7 +61,7 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         # Check if it's a static file request for a project
         if len(parts) >= 2 and parts[0] in projects:
             if len(parts) >= 3 and parts[1] == "static":
-                import mimetypes
+                # Remove project name and static prefix
                 static_path = BASE_DIR / parts[0] / "static" / "/".join(parts[2:])
                 if static_path.exists() and static_path.is_file():
                     content_type, _ = mimetypes.guess_type(static_path)
@@ -73,7 +73,7 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
                     self.wfile.write(static_path.read_bytes())
                     return
                 else:
-                    self.send_not_found(f"Static file not found")
+                    self.send_not_found(f"Static file not found: {static_path}")
                     return
 
         # Regular route handling
@@ -91,7 +91,7 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         body = None
         if method == "POST":
             length = int(self.headers.get('Content-Length', 0))
-            body = self.rfile.read(length) if length > 0 else b""  # Keep as bytes
+            body = self.rfile.read(length) if length > 0 else b""
 
         # Get headers (including cookies)
         headers = dict(self.headers)
