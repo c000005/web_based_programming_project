@@ -92,26 +92,23 @@ def handle_users_list(headers=None):
         users = cursor.fetchall()
         conn.close()
 
-        table_rows = ""
+        # Convert to list of dicts for template
+        users_list = []
         for user in users:
-            status_class = "badge-success" if user['is_active'] else "badge-danger"
-            status_text = "✅ Active" if user['is_active'] else "❌ Inactive"
-            table_rows += f"""
-            <tr>
-                <td>{user['id']}</td>
-                <td><strong>{user['username']}</strong></td>
-                <td>{user['email']}</td>
-                <td>{user['full_name'] or '-'}</td>
-                <td><span class="badge badge-primary">{user['role']}</span></td>
-                <td><span class="badge {status_class}">{status_text}</span></td>
-                <td>{user['created_at']}</td>
-                <td>
-                    <a href="/weather_platform/admin/users/edit/{user['id']}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
-                </td>
-            </tr>
-            """
+            users_list.append({
+                'id': user['id'],
+                'username': user['username'],
+                'email': user['email'],
+                'full_name': user['full_name'] or '-',
+                'role': user['role'],
+                'is_active': user['is_active'],
+                'created_at': user['created_at']
+            })
 
-        html = render_template("users_list.html", {"title": "لیست کاربران", "users_rows": table_rows})
+        html = render_template("users_list.html", {
+            "title": "لیست کاربران",
+            "users": users_list
+        })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
         return render_error_page(500, "Template users_list.html not found")

@@ -2,12 +2,12 @@
 
 {% include "_header.html" %}
 
-{% include "_nav.html" %}
-
 <div class="header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <h1>📋 لیست کاربران سیستم</h1>
     <p>مدیریت و مشاهده اطلاعات کاربران</p>
 </div>
+
+{% include "_nav.html" %}
 
 <!-- Table -->
 <div class="card">
@@ -22,13 +22,30 @@
                     <th>نقش</th>
                     <th>وضعیت</th>
                     <th>تاریخ ثبت نام</th>
-                    <td>
-    <a href="/weather_platform/admin/users/edit/{{user['id']}}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
-</td>
+                    <th>عملیات</th>
                 </tr>
             </thead>
             <tbody>
-                {{users_rows}}
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.full_name or '-' }}</td>
+                    <td><span class="badge badge-primary">{{ user.role }}</span></td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="badge badge-success">✅ Active</span>
+                        {% else %}
+                            <span class="badge badge-danger">❌ Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.created_at }}</td>
+                    <td>
+                        <a href="/weather_platform/admin/users/edit/{{ user.id }}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -36,4 +53,50 @@
         📊 نمایش تمام کاربران ثبت نام شده در سیستم
     </div>
 </div>
+
+<!-- Add some CSS for badges -->
+<style>
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+    .badge-primary {
+        background: #667eea;
+        color: white;
+    }
+    .badge-success {
+        background: #10b981;
+        color: white;
+    }
+    .badge-danger {
+        background: #ef4444;
+        color: white;
+    }
+    .badge-warning {
+        background: #f59e0b;
+        color: white;
+    }
+    .badge-info {
+        background: #3b82f6;
+        color: white;
+    }
+    .btn-sm {
+        padding: 5px 12px;
+        font-size: 0.85em;
+        border-radius: 6px;
+    }
+    .btn-primary {
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-primary:hover {
+        background: #5a6fd6;
+    }
+</style>
+
 {% include "_footer.html" %}

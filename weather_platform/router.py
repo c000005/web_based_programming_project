@@ -129,7 +129,7 @@ def handle_get_requests(path, headers):
         case "/users/new":
             return user_controller.handle_user_form(headers)
         case "/users/list":
-            return user_controller.handle_users_list()
+            return user_controller.handle_users_list(headers)
         case "/admin/users":
             return user_controller.handle_users_list(headers)
 
