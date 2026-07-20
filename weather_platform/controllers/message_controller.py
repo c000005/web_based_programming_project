@@ -3,7 +3,7 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_message_form(headers):
+def handle_message_form(headers=None):
     """Show new message form"""
     html = render_template("message_form.html", {"title": "ارسال پیام جدید"})
     if html:
@@ -11,7 +11,7 @@ def handle_message_form(headers):
     return render_error_page(500, "Template message_form.html not found")
 
 
-def handle_message_new_post(body):
+def handle_message_new_post(body, headers=None):
     """Process message submission"""
     form_data = parse_form_data(body)
     name = form_data.get('name', '').strip()
@@ -31,13 +31,13 @@ def handle_message_new_post(body):
                        ''', (name, email, subject, message))
         conn.commit()
         conn.close()
-        return """<p style='color:green'>✅ Message saved successfully.</p>""", 200, {
+        return '<p style="color:green">✅ Message saved successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except Exception as e:
         return render_error_page(500, f"خطا در ذخیره پیام: {e}")
 
 
-def handle_message_view(path):
+def handle_message_view(path, headers=None):
     """View single message"""
     try:
         message_id = int(path.split("/")[-1])
@@ -72,7 +72,7 @@ def handle_message_view(path):
         return render_error_page(500, f"خطا در دریافت پیام: {e}")
 
 
-def handle_messages_list():
+def handle_messages_list(headers=None):
     """Show messages list"""
     try:
         conn = get_db_connection()

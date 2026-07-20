@@ -3,7 +3,7 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_user_form(headers):
+def handle_user_form(headers=None):
     """Show new user form"""
     html = render_template("register.html", {"title": "ثبت نام کاربر جدید"})
     if html:
@@ -11,7 +11,7 @@ def handle_user_form(headers):
     return render_error_page(500, "Template register.html not found")
 
 
-def handle_user_edit_get(path, headers):
+def handle_user_edit_get(path, headers=None):
     """Show edit user form"""
     try:
         user_id = int(path.split("/")[-1])
@@ -44,7 +44,7 @@ def handle_user_edit_get(path, headers):
         return render_error_page(500, f"خطا در دریافت کاربر: {e}")
 
 
-def handle_user_edit_post(path, body, headers):
+def handle_user_edit_post(path, body, headers=None):
     """Process user edit"""
     try:
         user_id = int(path.split("/")[-1])
@@ -82,7 +82,7 @@ def handle_user_edit_post(path, body, headers):
         return render_error_page(500, f"خطا در بروزرسانی کاربر: {e}")
 
 
-def handle_users_list(headers):
+def handle_users_list(headers=None):
     """Show users list"""
     try:
         conn = get_db_connection()

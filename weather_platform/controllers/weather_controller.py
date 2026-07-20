@@ -3,7 +3,7 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_add_weather_get():
+def handle_add_weather_get(headers=None):
     """Show add weather form"""
     html = render_template("add_weather.html", {"title": "ثبت داده هواشناسی"})
     if html:
@@ -11,7 +11,7 @@ def handle_add_weather_get():
     return render_error_page(500, "Template add_weather.html not found")
 
 
-def handle_add_weather_post(body):
+def handle_add_weather_post(body, headers=None):
     """Process weather data addition"""
     form_data = parse_form_data(body)
     station_code = form_data.get('station_code', '').strip()
@@ -43,13 +43,13 @@ def handle_add_weather_post(body):
                              weather_condition))
         conn.commit()
         conn.close()
-        return "<p style='color:green'>✅ Weather data saved successfully!</p>", 200, {
+        return '<p style="color:green">✅ Weather data saved successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except Exception as e:
         return render_error_page(500, f"خطا در ذخیره داده هواشناسی: {e}")
 
 
-def handle_weather_list():
+def handle_weather_list(headers=None):
     """Show weather data list"""
     try:
         conn = get_db_connection()

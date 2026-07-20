@@ -1,9 +1,9 @@
-# weather_platform/controllers/report_controller.py
+# web_based_programming_project/weather_platform/controllers/report_controller.py
 
 from .base_controller import render_template, render_error_page, get_db_connection
 
 
-def handle_reports_list():
+def handle_reports_list(headers=None):
     """Show reports list"""
     try:
         conn = get_db_connection()
