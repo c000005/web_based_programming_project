@@ -33,41 +33,54 @@ def handle_wishlist_view(headers):
         wishlist_items = cursor.fetchall()
         conn.close()
 
-        wishlist_cards = ""
-        for item in wishlist_items:
-            price_display = f"{item['price']:,.0f}" if item['price'] else "رایگان"
-            category_icon = "📦"
-            if item['category'] == 'subscription':
-                category_icon = "📅"
-            elif item['category'] == 'api_access':
-                category_icon = "🔌"
-            elif item['category'] == 'custom_report':
-                category_icon = "📊"
-
-            wishlist_cards += f'''
-            <div class="wishlist-card bg-white rounded-xl shadow-md p-4 mb-4">
-                <div class="flex items-center justify-between border-b pb-3">
-                    <div>
-                        <h3 class="font-bold text-lg">{item['product_name']}</h3>
-                        <span class="text-sm text-gray-600">{category_icon} {item['category'] or 'سایر'}</span>
-                    </div>
-                    <div class="text-lg font-bold text-green-600">{price_display} تومان</div>
-                </div>
-                <div class="pt-3">
-                    <p class="text-gray-600 text-sm">{item['description'] or 'توضیحی ثبت نشده است'}</p>
-                    <div class="mt-4 flex gap-2 flex-wrap">
-                        <a href="/weather_platform/products/view/{item['product_id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
-                        <a href="/weather_platform/cart/add/{item['product_id']}" class="btn btn-sm btn-success">🛒 افزودن به سبد</a>
-                        <a href="/weather_platform/wishlist/remove/{item['wish_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم از علاقمندی‌ها اطمینان دارید؟')">❤️ حذف</a>
-                    </div>
-                </div>
+        if not wishlist_items:
+            wishlist_content = '''
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4">❤️</div>
+                <h3 class="text-2xl font-bold text-gray-700 mb-2">لیست علاقمندی‌ها خالی است</h3>
+                <p class="text-gray-500 mb-6">هنوز محصولی به علاقمندی‌های خود اضافه نکرده‌اید.</p>
+                <a href="/weather_platform/products/catalog" class="btn btn-primary">📋 مشاهده محصولات</a>
             </div>
             '''
+            item_count = 0
+        else:
+            wishlist_cards = ""
+            for item in wishlist_items:
+                price_display = f"{item['price']:,.0f}" if item['price'] else "رایگان"
+                category_icon = "📦"
+                if item['category'] == 'subscription':
+                    category_icon = "📅"
+                elif item['category'] == 'api_access':
+                    category_icon = "🔌"
+                elif item['category'] == 'custom_report':
+                    category_icon = "📊"
+
+                wishlist_cards += f'''
+                <div class="wishlist-card bg-white rounded-xl shadow-md p-4 mb-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div>
+                            <h3 class="font-bold text-lg">{item['product_name']}</h3>
+                            <span class="text-sm text-gray-600">{category_icon} {item['category'] or 'سایر'}</span>
+                        </div>
+                        <div class="text-lg font-bold text-green-600">{price_display} تومان</div>
+                    </div>
+                    <div class="pt-3">
+                        <p class="text-gray-600 text-sm">{item['description'] or 'توضیحی ثبت نشده است'}</p>
+                        <div class="mt-4 flex gap-2 flex-wrap">
+                            <a href="/weather_platform/products/view/{item['product_id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
+                            <a href="/weather_platform/cart/add/{item['product_id']}" class="btn btn-sm btn-success">🛒 افزودن به سبد</a>
+                            <a href="/weather_platform/wishlist/remove/{item['wish_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم از علاقمندی‌ها اطمینان دارید؟')">❤️ حذف</a>
+                        </div>
+                    </div>
+                </div>
+                '''
+            wishlist_content = f'<div class="grid grid-cols-1 gap-4">{wishlist_cards}</div>'
+            item_count = len(wishlist_items)
 
         html = render_template("wishlist.html", {
             "title": "علاقمندی‌ها",
-            "wishlist_cards": wishlist_cards,
-            "item_count": len(wishlist_items)
+            "wishlist_content": wishlist_content,
+            "item_count": item_count
         })
 
         if html:

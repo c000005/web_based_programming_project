@@ -122,8 +122,6 @@ def handle_get_requests(path, headers):
             return message_controller.handle_message_form(headers)
         case "/messages/list":
             return message_controller.handle_messages_list()
-        case "/admin/messages":
-            return message_controller.handle_messages_list()
 
         # ========== User Routes ==========
         case "/users/new":

@@ -10,7 +10,15 @@ def get_all_products():
     conn = sqlite3.connect(settings.DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM products WHERE is_deleted = 0 ORDER BY id DESC')
+    # Check if is_deleted column exists
+    cursor.execute("PRAGMA table_info(products)")
+    columns = [col[1] for col in cursor.fetchall()]
+
+    if 'is_deleted' in columns:
+        cursor.execute('SELECT * FROM products WHERE is_deleted = 0 ORDER BY id DESC')
+    else:
+        cursor.execute('SELECT * FROM products ORDER BY id DESC')
+
     rows = cursor.fetchall()
     conn.close()
     return [dict(row) for row in rows]

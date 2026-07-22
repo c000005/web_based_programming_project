@@ -1,59 +1,60 @@
 <!-- web_based_programming_project/weather_platform/templates/dashboard.html -->
+
 {% include "_header.html" %}
 
-    <div class="header">
-        <h1>🏠 داشبورد مدیریت</h1>
-        <p>مدیریت یکپارچه کاربران، محصولات، پیام‌ها و داده‌های هواشناسی</p>
+<div class="header">
+    <h1>🏠 داشبورد مدیریت</h1>
+    <p>مدیریت یکپارچه کاربران، محصولات، پیام‌ها و داده‌های هواشناسی</p>
+</div>
+
+{% include "_nav.html" %}
+
+<div class="dashboard-grid">
+    <a href="/weather_platform/admin/users" class="dashboard-card card-color-1">
+        <div class="icon">👥</div>
+        <h3>مدیریت کاربران</h3>
+        <p>مشاهده، افزودن و مدیریت کاربران سیستم</p>
+    </a>
+
+    <a href="/weather_platform/products/list" class="dashboard-card card-color-2">
+        <div class="icon">🛒</div>
+        <h3>مدیریت محصولات</h3>
+        <p>مشاهده و مدیریت محصولات و خدمات</p>
+    </a>
+
+    <a href="/weather_platform/messages/list" class="dashboard-card card-color-3">
+        <div class="icon">💬</div>
+        <h3>مدیریت پیام‌ها</h3>
+        <p>مشاهده و پاسخ به پیام‌های دریافتی</p>
+    </a>
+
+    <a href="/weather_platform/weather/list" class="dashboard-card card-color-4">
+        <div class="icon">🌤</div>
+        <h3>داده‌های هواشناسی</h3>
+        <p>مشاهده و تحلیل داده‌های هواشناسی</p>
+    </a>
+
+    <a href="/weather_platform/reports/list" class="dashboard-card card-color-5">
+        <div class="icon">📊</div>
+        <h3>گزارش‌های تحلیلی</h3>
+        <p>مشاهده گزارش‌های تولید شده</p>
+    </a>
+
+    <a href="/weather_platform/products/catalog" class="dashboard-card card-color-6">
+        <div class="icon">🛍</div>
+        <h3>کاتالوگ محصولات</h3>
+        <p>مشاهده محصولات در قالب کارت‌های زیبا</p>
+    </a>
+</div>
+
+<div class="card">
+    <h2 style="text-align: center; margin-bottom: 15px;">⚡ لینک‌های سریع</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+        <a href="/weather_platform/register" class="btn btn-success">➕ ثبت نام کاربر جدید</a>
+        <a href="/weather_platform/products/new" class="btn btn-primary">➕ افزودن محصول جدید</a>
+        <a href="/weather_platform/messages/new" class="btn btn-danger">✉️ ارسال پیام جدید</a>
+        <a href="/weather_platform/add_weather" class="btn btn-warning">🌡 ثبت داده هواشناسی</a>
     </div>
-
-    {% include "_nav.html" %}
-
-    <div class="dashboard-grid">
-        <a href="/weather_platform/admin/users" class="dashboard-card card-color-1">
-            <div class="icon">👥</div>
-            <h3>مدیریت کاربران</h3>
-            <p>مشاهده، افزودن و مدیریت کاربران سیستم</p>
-        </a>
-
-        <a href="/weather_platform/products/list" class="dashboard-card card-color-2">
-            <div class="icon">🛒</div>
-            <h3>مدیریت محصولات</h3>
-            <p>مشاهده و مدیریت محصولات و خدمات</p>
-        </a>
-
-        <a href="/weather_platform/admin/messages" class="dashboard-card card-color-3">
-            <div class="icon">💬</div>
-            <h3>مدیریت پیام‌ها</h3>
-            <p>مشاهده و پاسخ به پیام‌های دریافتی</p>
-        </a>
-
-        <a href="/weather_platform/weather/list" class="dashboard-card card-color-4">
-            <div class="icon">🌤</div>
-            <h3>داده‌های هواشناسی</h3>
-            <p>مشاهده و تحلیل داده‌های هواشناسی</p>
-        </a>
-
-        <a href="/weather_platform/reports/list" class="dashboard-card card-color-5">
-            <div class="icon">📊</div>
-            <h3>گزارش‌های تحلیلی</h3>
-            <p>مشاهده گزارش‌های تولید شده</p>
-        </a>
-
-        <a href="/weather_platform/products/catalog" class="dashboard-card card-color-6">
-            <div class="icon">🛍</div>
-            <h3>کاتالوگ محصولات</h3>
-            <p>مشاهده محصولات در قالب کارت‌های زیبا</p>
-        </a>
-    </div>
-
-    <div class="card">
-        <h2 style="text-align: center; margin-bottom: 15px;">⚡ لینک‌های سریع</h2>
-        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-            <a href="/weather_platform/register" class="btn btn-success">➕ ثبت نام کاربر جدید</a>
-            <a href="/weather_platform/products/new" class="btn btn-primary">➕ افزودن محصول جدید</a>
-            <a href="/weather_platform/messages/new" class="btn btn-danger">✉️ ارسال پیام جدید</a>
-            <a href="/weather_platform/add_weather" class="btn btn-warning">🌡 ثبت داده هواشناسی</a>
-        </div>
-    </div>
+</div>
 
 {% include "_footer.html" %}

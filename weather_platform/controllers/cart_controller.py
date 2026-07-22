@@ -22,11 +22,17 @@ def handle_cart_view(headers):
         cursor = conn.cursor()
 
         cursor.execute('''
-                       SELECT c.id as cart_id, c.quantity, c.added_at,
-                              p.id as product_id, p.name as product_name,
-                              p.description, p.price, p.category, p.is_active
+                       SELECT c.id   as cart_id,
+                              c.quantity,
+                              c.added_at,
+                              p.id   as product_id,
+                              p.name as product_name,
+                              p.description,
+                              p.price,
+                              p.category,
+                              p.is_active
                        FROM cart_items c
-                       JOIN products p ON c.product_id = p.id
+                                JOIN products p ON c.product_id = p.id
                        WHERE c.user_id = ?
                        ORDER BY c.added_at DESC
                        ''', (user_id,))
@@ -34,35 +40,78 @@ def handle_cart_view(headers):
         cart_items = cursor.fetchall()
         conn.close()
 
-        total_price = sum(item['price'] * item['quantity'] for item in cart_items if item['price'])
+        if not cart_items:
+            cart_content = '''
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4">🛒</div>
+                <h3 class="text-2xl font-bold text-gray-700 mb-2">سبد خرید شما خالی است</h3>
+                <p class="text-gray-500 mb-6">برای مشاهده محصولات، به کاتالوگ مراجعه کنید.</p>
+                <a href="/weather_platform/products/catalog" class="btn btn-primary">📋 مشاهده محصولات</a>
+            </div>
+            '''
+            item_count = 0
+            total_price = 0
+        else:
+            total_price = sum(item['price'] * item['quantity'] for item in cart_items if item['price'])
 
-        table_rows = ""
-        for item in cart_items:
-            price_display = f"{item['price']:,.0f}" if item['price'] else "رایگان"
-            total_item_price = f"{(item['price'] * item['quantity']):,.0f}" if item['price'] else "رایگان"
-            table_rows += f"""
-            <tr>
-                <td>{item['product_id']}</td>
-                <td><strong>{item['product_name']}</strong></td>
-                <td>{price_display} تومان</td>
-                <td>
-                    <form action="/weather_platform/cart/update/{item['cart_id']}" method="POST" style="display: inline;">
-                        <input type="number" name="quantity" value="{item['quantity']}" min="1" max="99" style="width: 60px; padding: 5px;">
-                        <button type="submit" class="btn btn-sm btn-primary">بروزرسانی</button>
-                    </form>
-                </td>
-                <td>{total_item_price} تومان</td>
-                <td>
-                    <a href="/weather_platform/cart/remove/{item['cart_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم اطمینان دارید؟')">🗑️ حذف</a>
-                </td>
-            </tr>
-            """
+            table_rows = ""
+            for item in cart_items:
+                price_display = f"{item['price']:,.0f}" if item['price'] else "رایگان"
+                total_item_price = f"{(item['price'] * item['quantity']):,.0f}" if item['price'] else "رایگان"
+                table_rows += f"""
+                <tr>
+                    <td>{item['product_id']}</td>
+                    <td><strong>{item['product_name']}</strong></td>
+                    <td>{price_display} تومان</td>
+                    <td>
+                        <form action="/weather_platform/cart/update/{item['cart_id']}" method="POST" style="display: inline;">
+                            <input type="number" name="quantity" value="{item['quantity']}" min="1" max="99" style="width: 60px; padding: 5px;">
+                            <button type="submit" class="btn btn-sm btn-primary">بروزرسانی</button>
+                        </form>
+                    </td>
+                    <td>{total_item_price} تومان</td>
+                    <td>
+                        <a href="/weather_platform/cart/remove/{item['cart_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم اطمینان دارید؟')">🗑️ حذف</a>
+                    </td>
+                </tr>
+                """
+
+            cart_content = f'''
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-3 text-right">شناسه</th>
+                            <th class="px-4 py-3 text-right">نام محصول</th>
+                            <th class="px-4 py-3 text-right">قیمت واحد</th>
+                            <th class="px-4 py-3 text-right">تعداد</th>
+                            <th class="px-4 py-3 text-right">مجموع</th>
+                            <th class="px-4 py-3 text-right">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {table_rows}
+                    </tbody>
+                    <tfoot>
+                        <tr class="border-t-2 border-gray-300 font-bold">
+                            <td colspan="4" class="px-4 py-4 text-left text-lg">مجموع کل:</td>
+                            <td class="px-4 py-4 text-lg text-green-600">{total_price:,.0f} تومان</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="mt-6 flex gap-4">
+                <a href="/weather_platform/products/catalog" class="btn btn-secondary">📋 ادامه خرید</a>
+                <a href="#" class="btn btn-primary flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">💳 تسویه حساب</a>
+            </div>
+            '''
+            item_count = len(cart_items)
 
         html = render_template("cart.html", {
             "title": "سبد خرید",
-            "cart_items": table_rows,
-            "total_price": f"{total_price:,.0f}" if total_price else "0",
-            "item_count": len(cart_items)
+            "cart_content": cart_content,
+            "item_count": item_count
         })
 
         if html:

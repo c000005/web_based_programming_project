@@ -1,7 +1,6 @@
 <!-- web_based_programming_project/weather_platform/templates/products_list.html -->
 {% include "_header.html" %}
 
-
 <div class="header" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
     <h1>🛒 لیست محصولات و خدمات</h1>
     <p>مدیریت محصولات و تعرفه‌ها</p>
@@ -22,10 +21,7 @@
                     <th>دسته‌بندی</th>
                     <th>وضعیت</th>
                     <th>تاریخ ایجاد</th>
-                    <td>
-    <a href="/weather_platform/products/edit/{{product['id']}}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
-    <a href="/weather_platform/products/view/{{product['id']}}" class="btn btn-sm btn-info">👁️ مشاهده</a>
-</td>
+                    <th>عملیات</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,3 +33,5 @@
         📊 نمایش تمام محصولات فعال و غیرفعال
     </div>
 </div>
+
+{% include "_footer.html" %}

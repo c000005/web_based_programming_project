@@ -25,20 +25,12 @@ def render_template(filename, context=None):
     template_path = TEMPLATE_DIR / filename
 
     if not template_path.exists():
-        print(f"Template not found: {template_path}")  # Debug
+        print(f"Template not found: {template_path}")
         return None
 
     content = template_path.read_text(encoding="utf-8")
 
-    # First, replace {{ variable }} with values from context
-    if context:
-        for key, value in context.items():
-            if isinstance(value, (str, int, float, bool)):
-                content = content.replace(f"{{{{ {key} }}}}", str(value))
-            elif value is None:
-                content = content.replace(f"{{{{ {key} }}}}", '')
-
-    # Process includes
+    # Process includes first
     import re
     include_pattern = r'{%\s*include\s+"([^"]+)"\s*%}'
     matches = re.findall(include_pattern, content)
@@ -47,12 +39,17 @@ def render_template(filename, context=None):
         include_path = TEMPLATE_DIR / include_file
         if include_path.exists():
             include_content = include_path.read_text(encoding="utf-8")
-            # Also replace variables in included content
-            if context:
-                for key, value in context.items():
-                    if isinstance(value, (str, int, float, bool)):
-                        include_content = include_content.replace(f"{{{{ {key} }}}}", str(value))
             content = content.replace(f'{{% include "{include_file}" %}}', include_content)
+
+    # Replace variables
+    if context:
+        for key, value in context.items():
+            if isinstance(value, (str, int, float, bool)):
+                content = content.replace(f"{{{{ {key} }}}}", str(value))
+            elif value is None:
+                content = content.replace(f"{{{{ {key} }}}}", '')
+            else:
+                content = content.replace(f"{{{{ {key} }}}}", str(value))
 
     return content
 

@@ -645,6 +645,26 @@ def setup_database():
         conn.close()
         print("[+] Database update completed.")
 
+        add_is_deleted_column()
+
+
+def add_is_deleted_column():
+    """Add is_deleted column to products table if not exists"""
+    conn = sqlite3.connect(settings.DB_PATH)
+    cursor = conn.cursor()
+
+    # Check if column exists
+    cursor.execute("PRAGMA table_info(products)")
+    columns = [col[1] for col in cursor.fetchall()]
+
+    if 'is_deleted' not in columns:
+        print("[*] Adding is_deleted column to products table...")
+        cursor.execute('ALTER TABLE products ADD COLUMN is_deleted BOOLEAN DEFAULT 0')
+        print("    ✓ is_deleted column added")
+
+    conn.commit()
+    conn.close()
+
 
 if __name__ == '__main__':
     setup_database()

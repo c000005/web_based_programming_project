@@ -42,18 +42,17 @@ def handle_login_post(body):
     conn.close()
 
     if not user:
+        error_html = '''
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-6 rounded-lg">
+            <p class="font-bold">⚠️ خطا</p>
+            <p>نام کاربری یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید.</p>
+        </div>
+        '''
         html = render_template("login.html", {
             "title": "ورود به سیستم",
-            "error": "نام کاربری یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید."
+            "error_html": error_html
         })
         return html, 401, {"Content-Type": "text/html; charset=utf-8"}
-
-    if not user['is_active']:
-        html = render_template("login.html", {
-            "title": "ورود به سیستم",
-            "error": "حساب کاربری شما غیرفعال است. با پشتیبانی تماس بگیرید."
-        })
-        return html, 403, {"Content-Type": "text/html; charset=utf-8"}
 
     # Create session
     session_id = auth.create_session(user['id'])

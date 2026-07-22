@@ -1,11 +1,12 @@
 <!-- web_based_programming_project/weather_platform/templates/403.html -->
-{% include "base.html" %}
 
-{% block content %}
+{% include "_header.html" %}
+
 <div class="error-page">
     <h1>۴۰۳</h1>
     <h2>دسترسی ممنوع</h2>
     <p>{{ message }}</p>
-    <a href="/catalog" class="btn">بازگشت به کاتالوگ</a>
+    <a href="/weather_platform/products/catalog" class="btn">بازگشت به کاتالوگ</a>
 </div>
-{% endblock %}
+
+{% include "_footer.html" %}

@@ -11,13 +11,8 @@
             <p class="text-purple-200 mt-2">به پلتفرم هواشناسی خوش آمدید</p>
         </div>
 
-        <!-- Error Message -->
-        {% if error %}
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-6 rounded-lg">
-            <p class="font-bold">⚠️ خطا</p>
-            <p>{{ error }}</p>
-        </div>
-        {% endif %}
+        <!-- Error Message - Simple conditional with HTML comment -->
+        {{ error_html }}
 
         <!-- Login Form -->
         <form action="/weather_platform/login" method="POST" class="p-8">
