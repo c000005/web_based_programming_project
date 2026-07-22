@@ -8,7 +8,7 @@
 
     <div class="card" style="max-width: 600px; margin: 0 auto;">
         <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <h2> ویرایش اطلاعات کاربر</h2>
+            <h2>✏️ ویرایش اطلاعات کاربر</h2>
             <p style="opacity: 0.9; margin-top: 5px;">در حال ویرایش کاربر با شناسه {{ user_id }}</p>
         </div>
 
@@ -31,9 +31,9 @@
             <div class="form-group">
                 <label for="role">نقش کاربری</label>
                 <select id="role" name="role" class="form-control">
-                    <option value="admin" {% if role == 'admin' %}selected{% endif %}>مدیر</option>
-                    <option value="analyst" {% if role == 'analyst' %}selected{% endif %}>تحلیل‌گر</option>
-                    <option value="viewer" {% if role == 'viewer' %}selected{% endif %}>بیننده</option>
+                    <option value="admin" {% if role == 'admin' %}selected{% endif %}>👑 مدیر</option>
+                    <option value="analyst" {% if role == 'analyst' %}selected{% endif %}>📊 تحلیل‌گر</option>
+                    <option value="viewer" {% if role == 'viewer' %}selected{% endif %}>👀 بیننده</option>
                 </select>
             </div>
 
@@ -45,7 +45,7 @@
             </div>
 
             <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-primary" style="flex: 1;">ذخیره تغییرات</button>
+                <button type="submit" class="btn btn-primary" style="flex: 1;">💾 ذخیره تغییرات</button>
                 <a href="/weather_platform/admin/users" class="btn btn-secondary" style="flex: 1; text-align: center;">❌ انصراف</a>
             </div>
         </form>
