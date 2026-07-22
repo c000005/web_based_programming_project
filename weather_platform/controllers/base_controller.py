@@ -20,90 +20,39 @@ def get_db_connection():
 
 def render_template(filename, context=None):
     """
-    Render template with support for:
-    - {% include "file.html" %} - include other templates
-    - {{ variable }} - variable substitution
-    - {% if condition %} ... {% endif %} - simple conditionals
-    - {% for item in items %} ... {% endfor %} - simple loops
+    Render template with support for includes and variable substitution
     """
     template_path = TEMPLATE_DIR / filename
 
     if not template_path.exists():
+        print(f"Template not found: {template_path}")  # Debug
         return None
 
     content = template_path.read_text(encoding="utf-8")
 
-    # Process includes recursively
-    for _ in range(5):
-        include_pattern = r'{%\s*include\s+"([^"]+)"\s*%}'
-        matches = re.findall(include_pattern, content)
-
-        if not matches:
-            break
-
-        for include_file in matches:
-            include_path = TEMPLATE_DIR / include_file
-            if include_path.exists():
-                include_content = include_path.read_text(encoding="utf-8")
-                content = content.replace(f'{{% include "{include_file}" %}}', include_content)
-
-    # Process {% if condition %} ... {% endif %}
+    # First, replace {{ variable }} with values from context
     if context:
-        # Process if statements
-        if_pattern = r'{%\s*if\s+([^%]+)%}(.*?){%\s*endif\s*%}'
-        matches = re.findall(if_pattern, content, re.DOTALL)
-
-        for condition, block in matches:
-            condition = condition.strip()
-            # Evaluate condition
-            if condition in context:
-                value = context[condition]
-                if value:
-                    content = content.replace(f'{{% if {condition} %}}{block}{{% endif %}}', block)
-                else:
-                    content = content.replace(f'{{% if {condition} %}}{block}{{% endif %}}', '')
-            else:
-                # If condition variable doesn't exist, remove the block
-                content = content.replace(f'{{% if {condition} %}}{block}{{% endif %}}', '')
-
-        # Process for loops: {% for item in items %} ... {% endfor %}
-        for_pattern = r'{%\s*for\s+(\w+)\s+in\s+(\w+)\s*%}(.*?){%\s*endfor\s*%}'
-        matches = re.findall(for_pattern, content, re.DOTALL)
-
-        for item_var, list_var, block in matches:
-            if list_var in context and isinstance(context[list_var], (list, tuple)):
-                items = context[list_var]
-                result = ""
-                for item in items:
-                    # Create a context with the item
-                    item_context = context.copy()
-                    if isinstance(item, dict):
-                        # If item is a dict, merge its keys into context
-                        item_context.update(item)
-                    item_context[item_var] = item
-
-                    # Process the block with the item context
-                    block_content = block
-                    for key, value in item_context.items():
-                        if isinstance(value, (str, int, float, bool)):
-                            block_content = block_content.replace(f"{{{{ {key} }}}}", str(value))
-                    result += block_content
-                content = content.replace(f'{{% for {item_var} in {list_var} %}}{block}{{% endfor %}}', result)
-            else:
-                # If list doesn't exist, remove the block
-                content = content.replace(f'{{% for {item_var} in {list_var} %}}{block}{{% endfor %}}', '')
-
-        # Process simple variables {{ variable }}
         for key, value in context.items():
-            # Don't replace complex objects, only strings and basic types
             if isinstance(value, (str, int, float, bool)):
                 content = content.replace(f"{{{{ {key} }}}}", str(value))
             elif value is None:
                 content = content.replace(f"{{{{ {key} }}}}", '')
 
-    # Remove any unprocessed template tags (cleanup)
-    content = re.sub(r'{%\s*[^%]+?\s*%}', '', content)
-    content = re.sub(r'{{\s*[^}]+?\s*}}', '', content)
+    # Process includes
+    import re
+    include_pattern = r'{%\s*include\s+"([^"]+)"\s*%}'
+    matches = re.findall(include_pattern, content)
+
+    for include_file in matches:
+        include_path = TEMPLATE_DIR / include_file
+        if include_path.exists():
+            include_content = include_path.read_text(encoding="utf-8")
+            # Also replace variables in included content
+            if context:
+                for key, value in context.items():
+                    if isinstance(value, (str, int, float, bool)):
+                        include_content = include_content.replace(f"{{{{ {key} }}}}", str(value))
+            content = content.replace(f'{{% include "{include_file}" %}}', include_content)
 
     return content
 

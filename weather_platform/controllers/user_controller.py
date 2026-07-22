@@ -64,7 +64,11 @@ def handle_user_edit_post(path, body, headers=None):
         cursor = conn.cursor()
         cursor.execute('''
                        UPDATE users
-                       SET username = ?, email = ?, full_name = ?, role = ?, is_active = ?
+                       SET username  = ?,
+                           email     = ?,
+                           full_name = ?,
+                           role      = ?,
+                           is_active = ?
                        WHERE id = ?
                        ''', (username, email, full_name, role, is_active_int, user_id))
 
@@ -74,8 +78,16 @@ def handle_user_edit_post(path, body, headers=None):
 
         conn.commit()
         conn.close()
-        return '<p style="color:green">✅ User updated successfully!</p>', 200, {
-            "Content-Type": "text/html; charset=utf-8"}
+
+        # Redirect back to users list with success message
+        return """
+        <div style="max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div style="color: #155724; background-color: #d4edda; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                <h2>✅ کاربر با موفقیت بروزرسانی شد!</h2>
+            </div>
+            <a href="/weather_platform/admin/users" class="btn btn-primary" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">بازگشت به لیست کاربران</a>
+        </div>
+        """, 200, {"Content-Type": "text/html; charset=utf-8"}
     except ValueError:
         return render_error_page(400, "شناسه نامعتبر")
     except Exception as e:
@@ -92,22 +104,31 @@ def handle_users_list(headers=None):
         users = cursor.fetchall()
         conn.close()
 
-        # Convert to list of dicts for template
-        users_list = []
+        # Build HTML rows in the controller
+        table_rows = ""
         for user in users:
-            users_list.append({
-                'id': user['id'],
-                'username': user['username'],
-                'email': user['email'],
-                'full_name': user['full_name'] or '-',
-                'role': user['role'],
-                'is_active': user['is_active'],
-                'created_at': user['created_at']
-            })
+            status_class = "badge-success" if user['is_active'] else "badge-danger"
+            status_text = "✅ Active" if user['is_active'] else "❌ Inactive"
+            full_name = user['full_name'] or '-'
+
+            table_rows += f"""
+            <tr>
+                <td>{user['id']}</td>
+                <td><strong>{user['username']}</strong></td>
+                <td>{user['email']}</td>
+                <td>{full_name}</td>
+                <td><span class="badge badge-primary">{user['role']}</span></td>
+                <td><span class="badge {status_class}">{status_text}</span></td>
+                <td>{user['created_at']}</td>
+                <td>
+                    <a href="/weather_platform/admin/users/edit/{user['id']}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
+                </td>
+            </tr>
+            """
 
         html = render_template("users_list.html", {
             "title": "لیست کاربران",
-            "users": users_list
+            "users_rows": table_rows
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}

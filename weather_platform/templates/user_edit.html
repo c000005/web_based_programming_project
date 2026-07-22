@@ -4,98 +4,52 @@
 
 {% include "_nav.html" %}
 
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-8">
-            <h1 class="text-3xl font-bold text-white text-center">✏️ ویرایش اطلاعات کاربر</h1>
-            <p class="text-purple-100 text-center mt-2">در حال ویرایش کاربر با شناسه {{user_id}}</p>
+<div class="container" style="max-width: 600px; margin: 0 auto;">
+
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <h2> ویرایش اطلاعات کاربر</h2>
+            <p style="opacity: 0.9; margin-top: 5px;">در حال ویرایش کاربر با شناسه {{ user_id }}</p>
         </div>
 
-        <!-- Form -->
-        <form action="/weather_platform/admin/users/edit/1" method="POST" class="p-8">
-            <!-- Username -->
-            <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-2" for="username">
-                    نام کاربری <span class="text-red-500">*</span>
-                </label>
-                <input type="text"
-                       id="username"
-                       name="username"
-                       value="{{username}}"
-                       required
-                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+        <form action="/weather_platform/admin/users/edit/{{ user_id }}" method="POST">
+            <div class="form-group">
+                <label for="username">نام کاربری <span class="required">*</span></label>
+                <input type="text" id="username" name="username" value="{{ username }}" class="form-control" required>
             </div>
 
-            <!-- Email -->
-            <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-2" for="email">
-                    ایمیل <span class="text-red-500">*</span>
-                </label>
-                <input type="email"
-                       id="email"
-                       name="email"
-                       value="{{email}}"
-                       required
-                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            <div class="form-group">
+                <label for="email">ایمیل <span class="required">*</span></label>
+                <input type="email" id="email" name="email" value="{{ email }}" class="form-control" required>
             </div>
 
-            <!-- Full Name -->
-            <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-2" for="full_name">
-                    نام کامل
-                </label>
-                <input type="text"
-                       id="full_name"
-                       name="full_name"
-                       value="{{full_name}}"
-                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            <div class="form-group">
+                <label for="full_name">نام کامل</label>
+                <input type="text" id="full_name" name="full_name" value="{{ full_name }}" class="form-control">
             </div>
 
-            <!-- Role -->
-            <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-2" for="role">
-                    نقش کاربری
-                </label>
-                <select id="role"
-                        name="role"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <div class="form-group">
+                <label for="role">نقش کاربری</label>
+                <select id="role" name="role" class="form-control">
                     <option value="admin" {% if role == 'admin' %}selected{% endif %}>مدیر</option>
                     <option value="analyst" {% if role == 'analyst' %}selected{% endif %}>تحلیل‌گر</option>
                     <option value="viewer" {% if role == 'viewer' %}selected{% endif %}>بیننده</option>
                 </select>
             </div>
 
-            <!-- Active Status -->
-            <div class="mb-8">
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox"
-                           name="is_active"
-                           class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
-                           {{is_active_checked}}>
-                    <span class="mr-3 text-gray-700 font-bold">کاربر فعال باشد</span>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" name="is_active" value="1" {{ is_active_checked }} style="width: 20px; height: 20px; margin-left: 10px;">
+                    <span>کاربر فعال باشد</span>
                 </label>
             </div>
 
-            <!-- Buttons -->
-            <div class="flex gap-4">
-                <button type="submit"
-                        class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-bold">
-                    💾 ذخیره تغییرات
-                </button>
-                <a href="/weather_platform/admin/users"
-                   class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl text-center hover:bg-gray-400 transition-all duration-300 font-bold">
-                    ❌ انصراف
-                </a>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">ذخیره تغییرات</button>
+                <a href="/weather_platform/admin/users" class="btn btn-secondary" style="flex: 1; text-align: center;">❌ انصراف</a>
             </div>
         </form>
-
-        <!-- Info Box -->
-        <div class="bg-blue-50 border-t border-blue-200 px-6 py-4">
-            <p class="text-blue-800 text-sm">
-                💡 نکته: برای ویرایش رمز عبور، از بخش مدیریت امنیت استفاده کنید.
-            </p>
-        </div>
     </div>
 </div>
+
 {% include "_footer.html" %}
