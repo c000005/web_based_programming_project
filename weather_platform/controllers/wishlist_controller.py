@@ -10,7 +10,7 @@ def get_user_id_from_headers(headers):
     return user['id'] if user else None
 
 
-def handle_wishlist_view(headers):
+def handle_wishlist_view(headers, user_display=""):
     """View wishlist"""
     user_id = get_user_id_from_headers(headers)
     if not user_id:
@@ -87,6 +87,7 @@ def handle_wishlist_view(headers):
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
         return render_error_page(500, "Template wishlist.html not found")
+
 
     except Exception as e:
         return render_error_page(500, f"خطا در دریافت علاقمندی‌ها: {e}")

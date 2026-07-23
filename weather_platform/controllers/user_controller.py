@@ -26,6 +26,10 @@ def handle_user_edit_get(path, headers=None):
         if not user:
             return render_error_page(404, f"کاربر با شناسه {user_id} یافت نشد")
 
+        # Get user_display from headers
+        from .auth_controller import get_user_display_from_headers
+        user_display = get_user_display_from_headers(headers) if headers else ""
+
         html = render_template("user_edit.html", {
             "title": "ویرایش کاربر",
             "user_id": user_id,
@@ -33,7 +37,8 @@ def handle_user_edit_get(path, headers=None):
             "email": user['email'],
             "full_name": user['full_name'] or '',
             "role": user['role'],
-            "is_active_checked": "checked" if user['is_active'] else ""
+            "is_active_checked": "checked" if user['is_active'] else "",
+            "user_display": user_display
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -94,7 +99,7 @@ def handle_user_edit_post(path, body, headers=None):
         return render_error_page(500, f"خطا در بروزرسانی کاربر: {e}")
 
 
-def handle_users_list(headers=None):
+def handle_users_list(headers=None, user_display=""):
     """Show users list"""
     try:
         conn = get_db_connection()

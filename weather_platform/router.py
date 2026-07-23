@@ -92,9 +92,16 @@ def handle_get_requests(path, headers):
         case "/dashboard":
             current_user = get_current_user_from_headers(headers)
             if not current_user:
+                # Pass error_html instead of error
+                error_html = '''
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-6 rounded-lg">
+                    <p class="font-bold">⚠️ خطا</p>
+                    <p>لطفاً برای دسترسی به داشبورد وارد شوید.</p>
+                </div>
+                '''
                 html = render_template("login.html", {
                     "title": "ورود به سیستم",
-                    "error": "لطفاً برای دسترسی به داشبورد وارد شوید."
+                    "error_html": error_html
                 })
                 return html, 401, {"Content-Type": "text/html; charset=utf-8"}
             html = render_template("dashboard.html", {

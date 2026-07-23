@@ -85,66 +85,8 @@ def delete_product(product_id):
     return True
 
 
-def handle_products_catalog(headers):
-    """Show product catalog with cards"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('''SELECT id, name, description, price, category, is_active
-                          FROM products
-                          WHERE is_active = 1
-                          ORDER BY id DESC''')
-        products = cursor.fetchall()
-        conn.close()
-
-        catalog_cards = ""
-        for p in products:
-            price_display = f"{p['price']:,.0f}" if p['price'] else "رایگان"
-            category_icon = "📦"
-            if p['category'] == 'subscription':
-                category_icon = "📅"
-            elif p['category'] == 'api_access':
-                category_icon = "🔌"
-            elif p['category'] == 'custom_report':
-                category_icon = "📊"
-
-            catalog_cards += f'''
-            <div class="product-card" data-title="{p['name'].lower()}" 
-                 data-description="{p['description'].lower() if p['description'] else ''}" 
-                 data-category="{p['category'] or ''}">
-                <div class="product-image">{category_icon}</div>
-                <div class="product-body">
-                    <h3>{p['name']}</h3>
-                    <span class="category">{p['category'] or 'سایر'}</span>
-                    <p class="description">{p['description'] or 'توضیحی ثبت نشده'}</p>
-                    <div class="price">{price_display} تومان</div>
-                    <div class="actions">
-                        <a href="/weather_platform/products/view/{p['id']}" class="btn btn-primary">👁️ مشاهده</a>
-                        <a href="/weather_platform/cart/add/{p['id']}" class="btn btn-success">🛒 خرید</a>
-                        <a href="/weather_platform/wishlist/add/{p['id']}" class="btn btn-danger">علاقه مندی</a>
-                    </div>
-                </div>
-            </div>
-            '''
-
-        html = render_template("catalog.html", {
-            "title": "کاتالوگ محصولات",
-            "catalog_cards": catalog_cards,
-            "user_display": user_display
-        })
-        if html:
-            return html, 200, {"Content-Type": "text/html; charset=utf-8"}
-        return render_error_page(500, "Template catalog.html not found")
-    except Exception as e:
-        return render_error_page(500, f"خطا در دریافت محصولات: {e}")
 
 
-def handle_product_new_get(headers):
-    """Show add product form"""
-    html = render_template("product_form.html", {"title": "افزودن محصول جدید"})
-    if html:
-        return html, 200, {"Content-Type": "text/html; charset=utf-8"}
-    return render_error_page(500, "Template product_form.html not found")
 
 
 def handle_product_new_post(body, headers):
@@ -173,43 +115,6 @@ def handle_product_new_post(body, headers):
     except Exception as e:
         return render_error_page(500, f"خطا در افزودن محصول: {e}")
 
-
-def handle_products_list(headers):
-    """Show products list"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            'SELECT id, name, description, price, category, is_active, created_at FROM products ORDER BY created_at DESC')
-        products = cursor.fetchall()
-        conn.close()
-
-        table_rows = ""
-        for p in products:
-            status_class = "badge-success" if p['is_active'] else "badge-danger"
-            status_text = "✅ Active" if p['is_active'] else "❌ Inactive"
-            table_rows += f"""
-            <tr>
-                <td>{p['id']}</td>
-                <td><strong>{p['name']}</strong></td>
-                <td>{p['description'] or '-'}</td>
-                <td>{p['price'] if p['price'] else '-'}</td>
-                <td>{p['category'] or '-'}</td>
-                <td><span class="badge {status_class}">{status_text}</span></td>
-                <td>{p['created_at']}</td>
-                <td>
-                    <a href="/weather_platform/products/edit/{p['id']}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
-                    <a href="/weather_platform/products/view/{p['id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
-                </td>
-            </tr>
-            """
-
-        html = render_template("products_list.html", {"title": "لیست محصولات", "products_rows": table_rows})
-        if html:
-            return html, 200, {"Content-Type": "text/html; charset=utf-8"}
-        return render_error_page(500, "Template products_list.html not found")
-    except Exception as e:
-        return render_error_page(500, f"خطا در دریافت محصولات: {e}")
 
 
 def handle_product_edit_get(path, headers):
@@ -347,3 +252,110 @@ def handle_product_view(path, headers):
         return render_error_page(404, "شناسه نامعتبر")
     except Exception as e:
         return render_error_page(500, f"خطا در دریافت محصول: {e}")
+
+
+def handle_products_catalog(headers, user_display=""):
+    """Show product catalog with cards"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''SELECT id, name, description, price, category, is_active
+                          FROM products
+                          WHERE is_active = 1
+                          ORDER BY id DESC''')
+        products = cursor.fetchall()
+        conn.close()
+
+        catalog_cards = ""
+        for p in products:
+            price_display = f"{p['price']:,.0f}" if p['price'] else "رایگان"
+            category_icon = "📦"
+            if p['category'] == 'subscription':
+                category_icon = "📅"
+            elif p['category'] == 'api_access':
+                category_icon = "🔌"
+            elif p['category'] == 'custom_report':
+                category_icon = "📊"
+
+            catalog_cards += f'''
+            <div class="product-card" data-title="{p['name'].lower()}" 
+                 data-description="{p['description'].lower() if p['description'] else ''}" 
+                 data-category="{p['category'] or ''}">
+                <div class="product-image">{category_icon}</div>
+                <div class="product-body">
+                    <h3>{p['name']}</h3>
+                    <span class="category">{p['category'] or 'سایر'}</span>
+                    <p class="description">{p['description'] or 'توضیحی ثبت نشده'}</p>
+                    <div class="price">{price_display} تومان</div>
+                    <div class="actions">
+                        <a href="/weather_platform/products/view/{p['id']}" class="btn btn-primary">👁️ مشاهده</a>
+                        <a href="/weather_platform/cart/add/{p['id']}" class="btn btn-success">🛒 خرید</a>
+                        <a href="/weather_platform/wishlist/add/{p['id']}" class="btn btn-danger">❤️</a>
+                    </div>
+                </div>
+            </div>
+            '''
+
+        html = render_template("catalog.html", {
+            "title": "کاتالوگ محصولات",
+            "catalog_cards": catalog_cards,
+            "user_display": user_display
+        })
+        if html:
+            return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+        return render_error_page(500, "Template catalog.html not found")
+    except Exception as e:
+        return render_error_page(500, f"خطا در دریافت محصولات: {e}")
+
+
+def handle_product_new_get(headers, user_display=""):
+    """Show add product form"""
+    html = render_template("product_form.html", {
+        "title": "افزودن محصول جدید",
+        "user_display": user_display
+    })
+    if html:
+        return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+    return render_error_page(500, "Template product_form.html not found")
+
+
+def handle_products_list(headers, user_display=""):
+    """Show products list"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT id, name, description, price, category, is_active, created_at FROM products ORDER BY created_at DESC')
+        products = cursor.fetchall()
+        conn.close()
+
+        table_rows = ""
+        for p in products:
+            status_class = "badge-success" if p['is_active'] else "badge-danger"
+            status_text = "✅ Active" if p['is_active'] else "❌ Inactive"
+            table_rows += f"""
+            <tr>
+                <td>{p['id']}</td>
+                <td><strong>{p['name']}</strong></td>
+                <td>{p['description'] or '-'}</td>
+                <td>{p['price'] if p['price'] else '-'}</td>
+                <td>{p['category'] or '-'}</td>
+                <td><span class="badge {status_class}">{status_text}</span></td>
+                <td>{p['created_at']}</td>
+                <td>
+                    <a href="/weather_platform/products/edit/{p['id']}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
+                    <a href="/weather_platform/products/view/{p['id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
+                </td>
+            </tr>
+            """
+
+        html = render_template("products_list.html", {
+            "title": "لیست محصولات",
+            "products_rows": table_rows,
+            "user_display": user_display
+        })
+        if html:
+            return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+        return render_error_page(500, "Template products_list.html not found")
+    except Exception as e:
+        return render_error_page(500, f"خطا در دریافت محصولات: {e}")

@@ -11,7 +11,7 @@ def get_user_id_from_headers(headers):
     return user['id'] if user else None
 
 
-def handle_cart_view(headers):
+def handle_cart_view(headers, user_display=""):
     """View shopping cart"""
     user_id = get_user_id_from_headers(headers)
     if not user_id:
@@ -118,6 +118,7 @@ def handle_cart_view(headers):
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
         return render_error_page(500, "Template cart.html not found")
+
 
     except Exception as e:
         return render_error_page(500, f"خطا در دریافت سبد خرید: {e}")

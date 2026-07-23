@@ -52,7 +52,7 @@ def handle_add_weather_post(body, headers=None):
         return render_error_page(500, f"خطا در ذخیره داده هواشناسی: {e}")
 
 
-def handle_weather_list(headers=None):
+def handle_weather_list(user_display=""):
     """Show weather data list"""
     try:
         conn = get_db_connection()

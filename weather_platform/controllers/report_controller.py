@@ -3,7 +3,7 @@
 from .base_controller import render_template, render_error_page, get_db_connection
 
 
-def handle_reports_list(headers=None):
+def handle_reports_list(user_display=""):
     """Show reports list"""
     try:
         conn = get_db_connection()

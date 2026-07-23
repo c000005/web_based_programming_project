@@ -3,9 +3,12 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_message_form(headers=None):
+def handle_message_form(headers=None, user_display=""):
     """Show new message form"""
-    html = render_template("message_form.html", {"title": "ارسال پیام جدید"})
+    html = render_template("message_form.html", {
+        "title": "ارسال پیام جدید",
+        "user_display": user_display
+    })
     if html:
         return html, 200, {"Content-Type": "text/html; charset=utf-8"}
     return render_error_page(500, "Template message_form.html not found")
@@ -52,6 +55,10 @@ def handle_message_view(path, headers=None):
         if not message:
             return render_error_page(404, f"پیام با شناسه {message_id} یافت نشد")
 
+        # Get user_display from headers
+        from .auth_controller import get_user_display_from_headers
+        user_display = get_user_display_from_headers(headers) if headers else ""
+
         html = render_template("message_view.html", {
             "title": "نمایش پیام",
             "message_id": message_id,
@@ -61,7 +68,8 @@ def handle_message_view(path, headers=None):
             "message": message['message'],
             "is_read": message['is_read'],
             "is_read_text": "خوانده شده" if message['is_read'] else "خوانده نشده",
-            "created_at": message['created_at']
+            "created_at": message['created_at'],
+            "user_display": user_display
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -72,7 +80,7 @@ def handle_message_view(path, headers=None):
         return render_error_page(500, f"خطا در دریافت پیام: {e}")
 
 
-def handle_messages_list(headers=None):
+def handle_messages_list(user_display=""):
     """Show messages list"""
     try:
         conn = get_db_connection()
