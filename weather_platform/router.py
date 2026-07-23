@@ -16,6 +16,7 @@ from controllers import (
     comment_controller
 )
 from controllers.base_controller import render_error_page, render_template, json_response, get_db_connection
+from controllers.auth_controller import get_current_user_from_headers, get_user_display_from_headers
 
 
 def run_db_setup():
@@ -71,77 +72,96 @@ def handle_get_requests(path, headers):
             return render_error_page(500, "Template index.html not found")
 
         case "/contact":
-            html = render_template("message_form.html", {"title": "تماس با ما"})
+            html = render_template("message_form.html", {
+                "title": "تماس با ما",
+                "user_display": get_user_display_from_headers(headers)
+            })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template message_form.html not found")
 
         case "/about":
-            html = render_template("about.html", {"title": "درباره ما"})
+            html = render_template("about.html", {
+                "title": "درباره ما",
+                "user_display": get_user_display_from_headers(headers)
+            })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template about.html not found")
 
         case "/dashboard":
-            # Check authentication
-            current_user = auth_controller.get_current_user_from_headers(headers)
+            current_user = get_current_user_from_headers(headers)
             if not current_user:
                 html = render_template("login.html", {
                     "title": "ورود به سیستم",
                     "error": "لطفاً برای دسترسی به داشبورد وارد شوید."
                 })
                 return html, 401, {"Content-Type": "text/html; charset=utf-8"}
-            html = render_template("dashboard.html", {"title": "داشبورد مدیریت", "user": current_user})
+            html = render_template("dashboard.html", {
+                "title": "داشبورد مدیریت",
+                "user": current_user,
+                "user_display": get_user_display_from_headers(headers)
+            })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template dashboard.html not found")
 
         # Register Route
         case "/register":
-            html = render_template("register.html", {"title": "ثبت نام کاربر جدید"})
+            html = render_template("register.html", {
+                "title": "ثبت نام کاربر جدید",
+                "user_display": get_user_display_from_headers(headers)
+            })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
             return render_error_page(500, "Template register.html not found")
 
         # ========== Weather Routes ==========
         case "/add_weather":
-            return weather_controller.handle_add_weather_get(headers)
+            # Check authentication for weather add
+            current_user = get_current_user_from_headers(headers)
+            if not current_user:
+                return render_error_page(401, "لطفاً برای افزودن داده هواشناسی وارد شوید.")
+            return weather_controller.handle_add_weather_get(headers, get_user_display_from_headers(headers))
         case "/weather/list":
-            return weather_controller.handle_weather_list()
+            return weather_controller.handle_weather_list(get_user_display_from_headers(headers))
 
         # ========== Product Routes ==========
         case "/products/new":
-            return product_controller.handle_product_new_get(headers)
+            current_user = get_current_user_from_headers(headers)
+            if not current_user:
+                return render_error_page(401, "لطفاً برای افزودن محصول وارد شوید.")
+            return product_controller.handle_product_new_get(headers, get_user_display_from_headers(headers))
         case "/products/list":
-            return product_controller.handle_products_list(headers)
+            return product_controller.handle_products_list(headers, get_user_display_from_headers(headers))
         case "/products/catalog":
-            return product_controller.handle_products_catalog(headers)
+            return product_controller.handle_products_catalog(headers, get_user_display_from_headers(headers))
 
         # ========== Message Routes ==========
         case "/messages/new":
-            return message_controller.handle_message_form(headers)
+            return message_controller.handle_message_form(headers, get_user_display_from_headers(headers))
         case "/messages/list":
-            return message_controller.handle_messages_list()
+            return message_controller.handle_messages_list(get_user_display_from_headers(headers))
 
         # ========== User Routes ==========
         case "/users/new":
             return user_controller.handle_user_form(headers)
         case "/users/list":
-            return user_controller.handle_users_list(headers)
+            return user_controller.handle_users_list(headers, get_user_display_from_headers(headers))
         case "/admin/users":
-            return user_controller.handle_users_list(headers)
+            return user_controller.handle_users_list(headers, get_user_display_from_headers(headers))
 
         # ========== Report Routes ==========
         case "/reports/list":
-            return report_controller.handle_reports_list()
+            return report_controller.handle_reports_list(get_user_display_from_headers(headers))
 
         # ========== Cart Routes ==========
         case "/cart":
-            return cart_controller.handle_cart_view(headers)
+            return cart_controller.handle_cart_view(headers, get_user_display_from_headers(headers))
 
         # ========== Wishlist Routes ==========
         case "/wishlist":
-            return wishlist_controller.handle_wishlist_view(headers)
+            return wishlist_controller.handle_wishlist_view(headers, get_user_display_from_headers(headers))
 
         # ========== API Routes ==========
         case "/api/status":

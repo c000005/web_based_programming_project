@@ -33,7 +33,11 @@ def handle_reports_list(headers=None):
             </tr>
             """
 
-        html = render_template("reports_list.html", {"title": "گزارش‌های تحلیلی", "reports_rows": table_rows})
+        html = render_template("reports_list.html", {
+            "title": "گزارش‌های تحلیلی",
+            "reports_rows": table_rows,
+            "user_display": user_display
+        })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
         return render_error_page(500, "Template reports_list.html not found")

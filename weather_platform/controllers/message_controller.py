@@ -102,7 +102,11 @@ def handle_messages_list(headers=None):
             </tr>
             """
 
-        html = render_template("messages_list.html", {"title": "لیست پیام‌ها", "messages_rows": table_rows})
+        html = render_template("messages_list.html", {
+            "title": "لیست پیام‌ها",
+            "messages_rows": table_rows,
+            "user_display": user_display
+        })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
         return render_error_page(500, "Template messages_list.html not found")

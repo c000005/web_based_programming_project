@@ -111,7 +111,8 @@ def handle_cart_view(headers):
         html = render_template("cart.html", {
             "title": "سبد خرید",
             "cart_content": cart_content,
-            "item_count": item_count
+            "item_count": item_count,
+            "user_display": user_display
         })
 
         if html:

@@ -121,7 +121,7 @@ def handle_products_catalog(headers):
                     <div class="actions">
                         <a href="/weather_platform/products/view/{p['id']}" class="btn btn-primary">👁️ مشاهده</a>
                         <a href="/weather_platform/cart/add/{p['id']}" class="btn btn-success">🛒 خرید</a>
-                        <a href="/weather_platform/wishlist/add/{p['id']}" class="btn btn-danger">❤️</a>
+                        <a href="/weather_platform/wishlist/add/{p['id']}" class="btn btn-danger">علاقه مندی</a>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,8 @@ def handle_products_catalog(headers):
 
         html = render_template("catalog.html", {
             "title": "کاتالوگ محصولات",
-            "catalog_cards": catalog_cards
+            "catalog_cards": catalog_cards,
+            "user_display": user_display
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}

@@ -80,7 +80,8 @@ def handle_wishlist_view(headers):
         html = render_template("wishlist.html", {
             "title": "علاقمندی‌ها",
             "wishlist_content": wishlist_content,
-            "item_count": item_count
+            "item_count": item_count,
+            "user_display": user_display
         })
 
         if html:

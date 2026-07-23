@@ -128,7 +128,8 @@ def handle_users_list(headers=None):
 
         html = render_template("users_list.html", {
             "title": "لیست کاربران",
-            "users_rows": table_rows
+            "users_rows": table_rows,
+            "user_display": user_display
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}

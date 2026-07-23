@@ -3,9 +3,12 @@
 from .base_controller import render_template, render_error_page, get_db_connection, parse_form_data
 
 
-def handle_add_weather_get(headers=None):
+def handle_add_weather_get(headers=None, user_display=""):
     """Show add weather form"""
-    html = render_template("add_weather.html", {"title": "ثبت داده هواشناسی"})
+    html = render_template("add_weather.html", {
+        "title": "ثبت داده هواشناسی",
+        "user_display": user_display
+    })
     if html:
         return html, 200, {"Content-Type": "text/html; charset=utf-8"}
     return render_error_page(500, "Template add_weather.html not found")
@@ -81,7 +84,11 @@ def handle_weather_list(headers=None):
             </tr>
             """
 
-        html = render_template("weather_list.html", {"title": "داده‌های هواشناسی", "weather_rows": table_rows})
+        html = render_template("weather_list.html", {
+            "title": "داده‌های هواشناسی",
+            "weather_rows": table_rows,
+            "user_display": user_display
+        })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
         return render_error_page(500, "Template weather_list.html not found")

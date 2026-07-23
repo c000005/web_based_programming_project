@@ -7,7 +7,10 @@ from .base_controller import render_template, render_error_page, parse_form_data
 
 def handle_login_get():
     """Show login form"""
-    html = render_template("login.html", {"title": "ورود به سیستم", "error": None})
+    html = render_template("login.html", {
+        "title": "ورود به سیستم",
+        "error_html": ""  # Pass empty string when no error
+    })
     if html:
         return html, 200, {"Content-Type": "text/html; charset=utf-8"}
     return render_error_page(500, "Template login.html not found")
@@ -151,3 +154,13 @@ def handle_register_post(body):
         return render_error_page(400, "نام کاربری یا ایمیل قبلاً ثبت شده است")
     except Exception as e:
         return render_error_page(500, f"خطا در ثبت‌نام: {e}")
+
+
+def get_user_display_from_headers(headers):
+    """Get user display HTML from headers"""
+    user = get_current_user_from_headers(headers)
+    if not user:
+        return '<a href="/weather_platform/login" class="text-blue-600 hover:bg-blue-600 hover:text-white">🔐 ورود</a> <a href="/weather_platform/register" class="text-green-600 hover:bg-green-600 hover:text-white">📝 ثبت نام</a>'
+
+    display_name = user.get('full_name') or user.get('username', 'کاربر')
+    return f'👤 {display_name} <a href="/weather_platform/logout" class="text-red-600 hover:bg-red-600 hover:text-white">🚪 خروج</a>'
