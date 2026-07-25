@@ -85,10 +85,6 @@ def delete_product(product_id):
     return True
 
 
-
-
-
-
 def handle_product_new_post(body, headers):
     """Process product addition"""
     form_data = parse_form_data(body)
@@ -116,7 +112,6 @@ def handle_product_new_post(body, headers):
         return render_error_page(500, f"خطا در افزودن محصول: {e}")
 
 
-
 def handle_product_edit_get(path, headers):
     """Show edit product form"""
     try:
@@ -131,6 +126,10 @@ def handle_product_edit_get(path, headers):
         if not product:
             return render_error_page(404, f"محصول با شناسه {product_id} یافت نشد")
 
+        # Get user_display from headers
+        from .auth_controller import get_user_display_from_headers
+        user_display = get_user_display_from_headers(headers) if headers else ""
+
         html = render_template("product_edit.html", {
             "title": "ویرایش محصول",
             "product_id": product_id,
@@ -138,7 +137,8 @@ def handle_product_edit_get(path, headers):
             "description": product['description'] or '',
             "price": product['price'] or 0,
             "category": product['category'] or '',
-            "is_active_checked": "checked" if product['is_active'] else ""
+            "is_active_checked": "checked" if product['is_active'] else "",
+            "user_display": user_display
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -201,6 +201,10 @@ def handle_product_view(path, headers):
             (product_id,))
         product = cursor.fetchone()
 
+        if not product:
+            conn.close()
+            return render_error_page(404, f"محصول با شناسه {product_id} یافت نشد")
+
         # Get comments
         cursor.execute('''
                        SELECT c.id, c.comment, c.rating, c.created_at, u.username, u.full_name
@@ -212,9 +216,6 @@ def handle_product_view(path, headers):
                        ''', (product_id,))
         comments = cursor.fetchall()
         conn.close()
-
-        if not product:
-            return render_error_page(404, f"محصول با شناسه {product_id} یافت نشد")
 
         status_text = "✅ فعال" if product['is_active'] else "❌ غیرفعال"
         price_display = f"{product['price']:,.0f}" if product['price'] else "رایگان"
@@ -233,6 +234,10 @@ def handle_product_view(path, headers):
             </div>
             '''
 
+        # Get user_display from headers
+        from .auth_controller import get_user_display_from_headers
+        user_display = get_user_display_from_headers(headers) if headers else ""
+
         html = render_template("product_view.html", {
             "title": f"محصول: {product['name']}",
             "product_id": product_id,
@@ -243,7 +248,8 @@ def handle_product_view(path, headers):
             "is_active_text": status_text,
             "created_at": product['created_at'],
             "comments": comments_html or '<p class="text-gray-500">هنوز نظری ثبت نشده است</p>',
-            "comments_count": len(comments)
+            "comments_count": len(comments),
+            "user_display": user_display
         })
         if html:
             return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -333,12 +339,13 @@ def handle_products_list(headers, user_display=""):
         for p in products:
             status_class = "badge-success" if p['is_active'] else "badge-danger"
             status_text = "✅ Active" if p['is_active'] else "❌ Inactive"
+            price_display = f"{p['price']:,.0f}" if p['price'] else '-'
             table_rows += f"""
             <tr>
                 <td>{p['id']}</td>
                 <td><strong>{p['name']}</strong></td>
                 <td>{p['description'] or '-'}</td>
-                <td>{p['price'] if p['price'] else '-'}</td>
+                <td>{price_display}</td>
                 <td>{p['category'] or '-'}</td>
                 <td><span class="badge {status_class}">{status_text}</span></td>
                 <td>{p['created_at']}</td>

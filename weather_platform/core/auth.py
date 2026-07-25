@@ -2,6 +2,11 @@
 import uuid
 import sqlite3
 from datetime import datetime, timedelta
+import sys
+from pathlib import Path
+
+# Add parent directory to path for settings import
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import settings
 
 

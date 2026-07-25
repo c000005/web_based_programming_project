@@ -1,4 +1,4 @@
-# weather_platform/controllers/__init__.py
+# web_based_programming_project/weather_platform/controllers/__init__.py
 
 from . import auth_controller
 from . import weather_controller

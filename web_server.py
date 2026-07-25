@@ -59,22 +59,25 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         parts = path.strip("/").split("/")
 
         # Check if it's a static file request for a project
-        if len(parts) >= 2 and parts[0] in projects:
-            if len(parts) >= 3 and parts[1] == "static":
-                # Remove project name and static prefix
-                static_path = BASE_DIR / parts[0] / "static" / "/".join(parts[2:])
-                if static_path.exists() and static_path.is_file():
-                    content_type, _ = mimetypes.guess_type(static_path)
-                    if content_type is None:
-                        content_type = "application/octet-stream"
-                    self.send_response(200)
-                    self.send_header('Content-type', content_type)
-                    self.end_headers()
-                    self.wfile.write(static_path.read_bytes())
-                    return
-                else:
-                    self.send_not_found(f"Static file not found: {static_path}")
-                    return
+        if len(parts) >= 2:
+            project_name = parts[0]
+            if project_name in projects:
+                # Check for static files - FIXED: Better static file detection
+                if len(parts) >= 3 and parts[1] == "static":
+                    # Remove project name and static prefix
+                    static_path = BASE_DIR / parts[0] / "static" / "/".join(parts[2:])
+                    if static_path.exists() and static_path.is_file():
+                        content_type, _ = mimetypes.guess_type(static_path)
+                        if content_type is None:
+                            content_type = "application/octet-stream"
+                        self.send_response(200)
+                        self.send_header('Content-type', content_type)
+                        self.end_headers()
+                        self.wfile.write(static_path.read_bytes())
+                        return
+                    else:
+                        self.send_not_found(f"Static file not found: {static_path}")
+                        return
 
         # Regular route handling
         if not parts or parts == ['']:
@@ -87,13 +90,13 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
         inner_path = "/" + "/".join(parts[1:]) if len(parts) > 1 else "/"
 
-        # Read POST body - DO NOT parse here, just pass raw bytes
+        # Read POST body
         body = None
         if method == "POST":
             length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(length) if length > 0 else b""
 
-        # Get headers (including cookies)
+        # Get headers
         headers = dict(self.headers)
 
         try:
@@ -101,19 +104,19 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
 
             if isinstance(result, tuple):
                 if len(result) == 3:
-                    response_data, status, headers = result
+                    response_data, status, response_headers = result
                 elif len(result) == 2:
                     response_data, status = result
-                    headers = {}
+                    response_headers = {}
                 else:
-                    response_data, status, headers = result
+                    response_data, status, response_headers = result
             else:
                 response_data = result
                 status = 200
-                headers = {}
+                response_headers = {}
 
             self.send_response(status)
-            for h, v in headers.items():
+            for h, v in response_headers.items():
                 self.send_header(h, v)
             self.end_headers()
 
@@ -130,18 +133,44 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
             self.send_not_found(f"Router error: {e}")
 
     def show_home(self):
-        html = "<h1>Multi-Project Python Server</h1><ul>"
+        html = """
+        <!DOCTYPE html>
+        <html dir="rtl" lang="fa">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Multi-Project Server</title>
+            <style>
+                body { font-family: 'Tahoma', 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; direction: rtl; margin: 0; padding: 20px; }
+                .container { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 500px; width: 100%; text-align: center; }
+                h1 { color: #333; margin-bottom: 20px; }
+                ul { list-style: none; padding: 0; }
+                li { margin: 10px 0; }
+                a { display: block; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; transition: transform 0.3s ease; }
+                a:hover { transform: translateY(-3px); }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>🌤️ Multi-Project Python Server</h1>
+                <ul>
+        """
         for name in projects.keys():
             html += f"<li><a href='/{name}'>{name}</a></li>"
-        html += "</ul>"
+        html += """
+                </ul>
+            </div>
+        </body>
+        </html>
+        """
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'text/html; charset=utf-8')
         self.end_headers()
         self.wfile.write(html.encode("utf-8"))
 
     def send_not_found(self, msg="Not found"):
         self.send_response(404)
-        self.send_header('Content-type', 'text/plain')
+        self.send_header('Content-type', 'text/plain; charset=utf-8')
         self.end_headers()
         self.wfile.write(msg.encode("utf-8"))
 

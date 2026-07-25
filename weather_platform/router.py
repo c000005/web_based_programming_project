@@ -52,6 +52,9 @@ def route(path, method, body, headers):
 def handle_get_requests(path, headers):
     """Handle all GET requests using match case"""
 
+    # Get user display for all pages
+    user_display = get_user_display_from_headers(headers)
+
     # ========== Auth Routes ==========
     match path:
         case "/login":
@@ -74,7 +77,7 @@ def handle_get_requests(path, headers):
         case "/contact":
             html = render_template("message_form.html", {
                 "title": "تماس با ما",
-                "user_display": get_user_display_from_headers(headers)
+                "user_display": user_display
             })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -83,7 +86,7 @@ def handle_get_requests(path, headers):
         case "/about":
             html = render_template("about.html", {
                 "title": "درباره ما",
-                "user_display": get_user_display_from_headers(headers)
+                "user_display": user_display
             })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -92,7 +95,6 @@ def handle_get_requests(path, headers):
         case "/dashboard":
             current_user = get_current_user_from_headers(headers)
             if not current_user:
-                # Pass error_html instead of error
                 error_html = '''
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-6 rounded-lg">
                     <p class="font-bold">⚠️ خطا</p>
@@ -107,7 +109,7 @@ def handle_get_requests(path, headers):
             html = render_template("dashboard.html", {
                 "title": "داشبورد مدیریت",
                 "user": current_user,
-                "user_display": get_user_display_from_headers(headers)
+                "user_display": user_display
             })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -117,7 +119,7 @@ def handle_get_requests(path, headers):
         case "/register":
             html = render_template("register.html", {
                 "title": "ثبت نام کاربر جدید",
-                "user_display": get_user_display_from_headers(headers)
+                "user_display": user_display
             })
             if html:
                 return html, 200, {"Content-Type": "text/html; charset=utf-8"}
@@ -125,50 +127,49 @@ def handle_get_requests(path, headers):
 
         # ========== Weather Routes ==========
         case "/add_weather":
-            # Check authentication for weather add
             current_user = get_current_user_from_headers(headers)
             if not current_user:
                 return render_error_page(401, "لطفاً برای افزودن داده هواشناسی وارد شوید.")
-            return weather_controller.handle_add_weather_get(headers, get_user_display_from_headers(headers))
+            return weather_controller.handle_add_weather_get(headers, user_display)
         case "/weather/list":
-            return weather_controller.handle_weather_list(get_user_display_from_headers(headers))
+            return weather_controller.handle_weather_list(user_display)
 
         # ========== Product Routes ==========
         case "/products/new":
             current_user = get_current_user_from_headers(headers)
             if not current_user:
                 return render_error_page(401, "لطفاً برای افزودن محصول وارد شوید.")
-            return product_controller.handle_product_new_get(headers, get_user_display_from_headers(headers))
+            return product_controller.handle_product_new_get(headers, user_display)
         case "/products/list":
-            return product_controller.handle_products_list(headers, get_user_display_from_headers(headers))
+            return product_controller.handle_products_list(headers, user_display)
         case "/products/catalog":
-            return product_controller.handle_products_catalog(headers, get_user_display_from_headers(headers))
+            return product_controller.handle_products_catalog(headers, user_display)
 
         # ========== Message Routes ==========
         case "/messages/new":
-            return message_controller.handle_message_form(headers, get_user_display_from_headers(headers))
+            return message_controller.handle_message_form(headers, user_display)
         case "/messages/list":
-            return message_controller.handle_messages_list(get_user_display_from_headers(headers))
+            return message_controller.handle_messages_list(user_display)
 
         # ========== User Routes ==========
         case "/users/new":
             return user_controller.handle_user_form(headers)
         case "/users/list":
-            return user_controller.handle_users_list(headers, get_user_display_from_headers(headers))
+            return user_controller.handle_users_list(headers, user_display)
         case "/admin/users":
-            return user_controller.handle_users_list(headers, get_user_display_from_headers(headers))
+            return user_controller.handle_users_list(headers, user_display)
 
         # ========== Report Routes ==========
         case "/reports/list":
-            return report_controller.handle_reports_list(get_user_display_from_headers(headers))
+            return report_controller.handle_reports_list(user_display)
 
         # ========== Cart Routes ==========
         case "/cart":
-            return cart_controller.handle_cart_view(headers, get_user_display_from_headers(headers))
+            return cart_controller.handle_cart_view(headers, user_display)
 
         # ========== Wishlist Routes ==========
         case "/wishlist":
-            return wishlist_controller.handle_wishlist_view(headers, get_user_display_from_headers(headers))
+            return wishlist_controller.handle_wishlist_view(headers, user_display)
 
         # ========== API Routes ==========
         case "/api/status":

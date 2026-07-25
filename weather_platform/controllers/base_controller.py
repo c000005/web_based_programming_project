@@ -30,8 +30,7 @@ def render_template(filename, context=None):
 
     content = template_path.read_text(encoding="utf-8")
 
-    # Process includes first
-    import re
+    # Process includes
     include_pattern = r'{%\s*include\s+"([^"]+)"\s*%}'
     matches = re.findall(include_pattern, content)
 
@@ -89,8 +88,7 @@ def render_error_page(status_code, message=""):
         "status_code": status_code,
         "status_text": status_text,
         "icon": icon,
-        "message": message,
-        "error_type": f"error-{status_code}"
+        "message": message
     })
 
     if html:
@@ -106,7 +104,7 @@ def render_error_page(status_code, message=""):
         <title>{title}</title>
         <style>
             body {{
-                font-family: 'Vazir', 'IRANSans', 'Tahoma', sans-serif;
+                font-family: 'Tahoma', 'Arial', sans-serif;
                 background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
                 display: flex;
                 justify-content: center;
@@ -125,26 +123,10 @@ def render_error_page(status_code, message=""):
                 max-width: 500px;
                 width: 100%;
             }}
-            .error-icon {{
-                font-size: 80px;
-                margin-bottom: 20px;
-            }}
-            .error-title {{
-                font-size: 28px;
-                color: #333;
-                margin-bottom: 10px;
-            }}
-            .error-code {{
-                font-size: 72px;
-                font-weight: bold;
-                color: #e74c3c;
-                margin: 10px 0;
-            }}
-            .error-message {{
-                color: #666;
-                margin: 20px 0;
-                font-size: 16px;
-            }}
+            .error-icon {{ font-size: 80px; margin-bottom: 20px; }}
+            .error-title {{ font-size: 28px; color: #333; margin-bottom: 10px; }}
+            .error-code {{ font-size: 72px; font-weight: bold; color: #e74c3c; margin: 10px 0; }}
+            .error-message {{ color: #666; margin: 20px 0; font-size: 16px; }}
             .btn-home {{
                 display: inline-block;
                 padding: 12px 30px;
@@ -206,4 +188,4 @@ def parse_form_data(body):
 
 def json_response(data, status=200):
     """Return JSON response"""
-    return json.dumps(data, ensure_ascii=False), status, {"Content-Type": "application/json"}
+    return json.dumps(data, ensure_ascii=False), status, {"Content-Type": "application/json; charset=utf-8"}
