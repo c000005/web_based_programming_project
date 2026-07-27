@@ -5,7 +5,7 @@ from pathlib import Path
 db_path = Path("weather_platform/weather_platform.db")
 
 if not db_path.exists():
-    print("❌ Database not found!")
+    print("Database not found!")
 else:
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -14,7 +14,7 @@ else:
     cursor.execute("SELECT id, username, password_hash, email, role FROM users")
     users = cursor.fetchall()
 
-    print("📋 Users in database:")
+    print("Users in database:")
     print("-" * 50)
     if users:
         for user in users:

@@ -34,7 +34,7 @@ def handle_message_new_post(body, headers=None):
                        ''', (name, email, subject, message))
         conn.commit()
         conn.close()
-        return '<p style="color:green">✅ Message saved successfully!</p>', 200, {
+        return '<p style="color:green"> Message saved successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except Exception as e:
         return render_error_page(500, f"خطا در ذخیره پیام: {e}")
@@ -93,7 +93,7 @@ def handle_messages_list(user_display=""):
         table_rows = ""
         for msg in messages:
             status_class = "badge-success" if msg['is_read'] else "badge-warning"
-            status_text = "✅ Read" if msg['is_read'] else "📩 Unread"
+            status_text = "Read" if msg['is_read'] else "Unread"
             short_message = msg['message'][:50] + "..." if len(msg['message']) > 50 else msg['message']
             table_rows += f"""
             <tr>

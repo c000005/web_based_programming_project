@@ -152,7 +152,7 @@ class MultiProjectHandler(BaseHTTPRequestHandler):
         </head>
         <body>
             <div class="container">
-                <h1>🌤️ Multi-Project Python Server</h1>
+                <h1>Multi-Project Python Server</h1>
                 <ul>
         """
         for name in projects.keys():

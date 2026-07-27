@@ -47,7 +47,7 @@ def handle_login_post(body):
     if not user:
         error_html = '''
         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-6 rounded-lg">
-            <p class="font-bold">⚠️ خطا</p>
+            <p class="font-bold">خطا</p>
             <p>نام کاربری یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید.</p>
         </div>
         '''
@@ -65,7 +65,7 @@ def handle_login_post(body):
     return """
     <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
         <div style="color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-            <h2>✅ ورود موفق!</h2>
+            <h2>ورود موفق!</h2>
             <p>خوش آمدید {}</p>
         </div>
         <a href="/weather_platform/dashboard" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">رفتن به داشبورد</a>
@@ -91,7 +91,7 @@ def handle_logout(headers):
     return """
     <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
         <div style="color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-            <h2>👋 خروج موفق</h2>
+            <h2>خروج موفق</h2>
             <p>شما با موفقیت خارج شدید.</p>
         </div>
         <a href="/weather_platform/login" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">ورود مجدد</a>
@@ -144,7 +144,7 @@ def handle_register_post(body):
         return """
         <div style="max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
             <div style="color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                <h2>✅ ثبت‌نام موفق!</h2>
+                <h2>ثبت‌نام موفق!</h2>
                 <p>کاربر {} با موفقیت ثبت شد.</p>
             </div>
             <a href="/weather_platform/login" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">ورود به سیستم</a>
@@ -160,7 +160,7 @@ def get_user_display_from_headers(headers):
     """Get user display HTML from headers"""
     user = get_current_user_from_headers(headers)
     if not user:
-        return '<a href="/weather_platform/login" class="text-blue-600 hover:bg-blue-600 hover:text-white">🔐 ورود</a> <a href="/weather_platform/register" class="text-green-600 hover:bg-green-600 hover:text-white">📝 ثبت نام</a>'
+        return '<a href="/weather_platform/login" class="text-blue-600 hover:bg-blue-600 hover:text-white">ورود</a> <a href="/weather_platform/register" class="text-green-600 hover:bg-green-600 hover:text-white">ثبت نام</a>'
 
     display_name = user.get('full_name') or user.get('username', 'کاربر')
-    return f'👤 {display_name} <a href="/weather_platform/logout" class="text-red-600 hover:bg-red-600 hover:text-white">🚪 خروج</a>'
+    return f'{display_name} <a href="/weather_platform/logout" class="text-red-600 hover:bg-red-600 hover:text-white">خروج</a>'

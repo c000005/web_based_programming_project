@@ -88,7 +88,7 @@ def handle_user_edit_post(path, body, headers=None):
         return """
         <div style="max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
             <div style="color: #155724; background-color: #d4edda; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
-                <h2>✅ کاربر با موفقیت بروزرسانی شد!</h2>
+                <h2>کاربر با موفقیت بروزرسانی شد!</h2>
             </div>
             <a href="/weather_platform/admin/users" class="btn btn-primary" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px;">بازگشت به لیست کاربران</a>
         </div>
@@ -113,7 +113,7 @@ def handle_users_list(headers=None, user_display=""):
         table_rows = ""
         for user in users:
             status_class = "badge-success" if user['is_active'] else "badge-danger"
-            status_text = "✅ Active" if user['is_active'] else "❌ Inactive"
+            status_text = "Active" if user['is_active'] else "Inactive"
             full_name = user['full_name'] or '-'
 
             table_rows += f"""
@@ -126,7 +126,7 @@ def handle_users_list(headers=None, user_display=""):
                 <td><span class="badge {status_class}">{status_text}</span></td>
                 <td>{user['created_at']}</td>
                 <td>
-                    <a href="/weather_platform/admin/users/edit/{user['id']}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
+                    <a href="/weather_platform/admin/users/edit/{user['id']}" class="btn btn-sm btn-primary"> ویرایش</a>
                 </td>
             </tr>
             """

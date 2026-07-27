@@ -79,7 +79,7 @@ def render_error_page(status_code, message=""):
         500: "خطای سرور"
     }
 
-    icon = error_icons.get(status_code, "⚠️")
+    icon = error_icons.get(status_code, "")
     title = error_titles.get(status_code, "خطا")
     status_text = status_messages.get(status_code, "Error")
 
@@ -149,7 +149,7 @@ def render_error_page(status_code, message=""):
             <div class="error-code">{status_code}</div>
             <h1 class="error-title">{title}</h1>
             {f'<p class="error-message">{message}</p>' if message else ''}
-            <a href="/weather_platform/dashboard" class="btn-home">🏠 بازگشت به داشبورد</a>
+            <a href="/weather_platform/dashboard" class="btn-home">بازگشت به داشبورد</a>
         </div>
     </body>
     </html>

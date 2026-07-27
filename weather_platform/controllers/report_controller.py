@@ -27,7 +27,7 @@ def handle_reports_list(user_display=""):
                 <td>{report['start_date'] or '-'}</td>
                 <td>{report['end_date'] or '-'}</td>
                 <td>{report['region'] or '-'}</td>
-                <td><span class="badge badge-info">{'🌐 Public' if report['is_public'] else '🔒 Private'}</span></td>
+                <td><span class="badge badge-info">{'Public' if report['is_public'] else 'Private'}</span></td>
                 <td>{report['view_count']}</td>
                 <td>{report['created_at']}</td>
             </tr>

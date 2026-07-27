@@ -106,7 +106,7 @@ def handle_product_new_post(body, headers):
                        ''', (name, description, float(price) if price else 0, category, 1 if is_active == '1' else 0))
         conn.commit()
         conn.close()
-        return '<p style="color:green">✅ Product added successfully!</p>', 200, {
+        return '<p style="color:green"> Product added successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except Exception as e:
         return render_error_page(500, f"خطا در افزودن محصول: {e}")
@@ -182,7 +182,7 @@ def handle_product_edit_post(path, body, headers):
 
         conn.commit()
         conn.close()
-        return '<p style="color:green">✅ Product updated successfully!</p>', 200, {
+        return '<p style="color:green"> Product updated successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except ValueError:
         return render_error_page(400, "شناسه نامعتبر")
@@ -217,7 +217,7 @@ def handle_product_view(path, headers):
         comments = cursor.fetchall()
         conn.close()
 
-        status_text = "✅ فعال" if product['is_active'] else "❌ غیرفعال"
+        status_text = "فعال" if product['is_active'] else "غیرفعال"
         price_display = f"{product['price']:,.0f}" if product['price'] else "رایگان"
 
         comments_html = ""
@@ -294,9 +294,9 @@ def handle_products_catalog(headers, user_display=""):
                     <p class="description">{p['description'] or 'توضیحی ثبت نشده'}</p>
                     <div class="price">{price_display} تومان</div>
                     <div class="actions">
-                        <a href="/weather_platform/products/view/{p['id']}" class="btn btn-primary">👁️ مشاهده</a>
-                        <a href="/weather_platform/cart/add/{p['id']}" class="btn btn-success">🛒 خرید</a>
-                        <a href="/weather_platform/wishlist/add/{p['id']}" class="btn btn-danger">❤️</a>
+                        <a href="/weather_platform/products/view/{p['id']}" class="btn btn-primary"> مشاهده</a>
+                        <a href="/weather_platform/cart/add/{p['id']}" class="btn btn-success"> خرید</a>
+                        <a href="/weather_platform/wishlist/add/{p['id']}" class="btn btn-danger">علاقه مندی</a>
                     </div>
                 </div>
             </div>
@@ -338,7 +338,7 @@ def handle_products_list(headers, user_display=""):
         table_rows = ""
         for p in products:
             status_class = "badge-success" if p['is_active'] else "badge-danger"
-            status_text = "✅ Active" if p['is_active'] else "❌ Inactive"
+            status_text = "Active" if p['is_active'] else "Inactive"
             price_display = f"{p['price']:,.0f}" if p['price'] else '-'
             table_rows += f"""
             <tr>
@@ -350,8 +350,8 @@ def handle_products_list(headers, user_display=""):
                 <td><span class="badge {status_class}">{status_text}</span></td>
                 <td>{p['created_at']}</td>
                 <td>
-                    <a href="/weather_platform/products/edit/{p['id']}" class="btn btn-sm btn-primary">✏️ ویرایش</a>
-                    <a href="/weather_platform/products/view/{p['id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
+                    <a href="/weather_platform/products/edit/{p['id']}" class="btn btn-sm btn-primary">ویرایش</a>
+                    <a href="/weather_platform/products/view/{p['id']}" class="btn btn-sm btn-info">مشاهده</a>
                 </td>
             </tr>
             """

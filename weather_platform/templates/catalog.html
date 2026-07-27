@@ -35,15 +35,15 @@
 <!-- Search and Filter -->
 <div class="search-bar">
     <div class="search-input">
-        <input type="text" id="searchInput" placeholder="🔍 جستجوی محصولات..."
+        <input type="text" id="searchInput" placeholder=" جستجوی محصولات..."
                class="form-control" onkeyup="filterProducts()">
     </div>
     <div class="filter-select">
         <select id="categorySelect" class="form-control" onchange="filterProducts()">
             <option value="all">همه دسته‌بندی‌ها</option>
-            <option value="subscription">📅 اشتراک</option>
-            <option value="api_access">🔌 دسترسی API</option>
-            <option value="custom_report">📊 گزارش سفارشی</option>
+            <option value="subscription"> اشتراک</option>
+            <option value="api_access"> دسترسی API</option>
+            <option value="custom_report"> گزارش سفارشی</option>
         </select>
     </div>
 </div>
@@ -81,7 +81,7 @@
             }
         });
 
-        document.getElementById('stats').innerHTML = `📊 ${visibleCount} محصول یافت شد`;
+        document.getElementById('stats').innerHTML = ` ${visibleCount} محصول یافت شد`;
     }
 
     document.addEventListener('DOMContentLoaded', function() {

@@ -97,7 +97,7 @@ def handle_get_requests(path, headers):
             if not current_user:
                 error_html = '''
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-6 rounded-lg">
-                    <p class="font-bold">⚠️ خطا</p>
+                    <p class="font-bold">خطا</p>
                     <p>لطفاً برای دسترسی به داشبورد وارد شوید.</p>
                 </div>
                 '''

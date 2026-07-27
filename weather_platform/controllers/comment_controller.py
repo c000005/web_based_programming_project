@@ -53,7 +53,7 @@ def handle_comment_add(path, body, headers):
 
         return f"""
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-            ✅ نظر شما با موفقیت ثبت شد.
+            نظر شما با موفقیت ثبت شد.
             <br>
             <a href="/weather_platform/products/view/{product_id}" class="text-green-800 underline">بازگشت به صفحه محصول</a>
         </div>

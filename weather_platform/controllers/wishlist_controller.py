@@ -67,9 +67,9 @@ def handle_wishlist_view(headers, user_display=""):
                     <div class="pt-3">
                         <p class="text-gray-600 text-sm">{item['description'] or 'توضیحی ثبت نشده است'}</p>
                         <div class="mt-4 flex gap-2 flex-wrap">
-                            <a href="/weather_platform/products/view/{item['product_id']}" class="btn btn-sm btn-info">👁️ مشاهده</a>
-                            <a href="/weather_platform/cart/add/{item['product_id']}" class="btn btn-sm btn-success">🛒 افزودن به سبد</a>
-                            <a href="/weather_platform/wishlist/remove/{item['wish_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم از علاقمندی‌ها اطمینان دارید؟')">❤️ حذف</a>
+                            <a href="/weather_platform/products/view/{item['product_id']}" class="btn btn-sm btn-info">مشاهده</a>
+                            <a href="/weather_platform/cart/add/{item['product_id']}" class="btn btn-sm btn-success">افزودن به سبد</a>
+                            <a href="/weather_platform/wishlist/remove/{item['wish_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم از علاقمندی‌ها اطمینان دارید؟')"> حذف</a>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@ def handle_wishlist_add(path, headers):
 
         return """
         <div class="bg-pink-100 border border-pink-400 text-pink-700 px-4 py-3 rounded-xl mb-4">
-            ❤️ محصول به لیست علاقمندی‌ها اضافه شد.
+            محصول به لیست علاقمندی‌ها اضافه شد.
             <br>
             <a href="/weather_platform/wishlist" class="text-pink-800 underline">مشاهده علاقمندی‌ها</a>
         </div>
@@ -155,7 +155,7 @@ def handle_wishlist_remove(path, headers):
 
         return """
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-            ✅ آیتم از علاقمندی‌ها حذف شد.
+            آیتم از علاقمندی‌ها حذف شد.
             <br>
             <a href="/weather_platform/wishlist" class="text-green-800 underline">بازگشت به علاقمندی‌ها</a>
         </div>

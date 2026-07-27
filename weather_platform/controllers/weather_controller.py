@@ -46,7 +46,7 @@ def handle_add_weather_post(body, headers=None):
                              weather_condition))
         conn.commit()
         conn.close()
-        return '<p style="color:green">✅ Weather data saved successfully!</p>', 200, {
+        return '<p style="color:green">Weather data saved successfully!</p>', 200, {
             "Content-Type": "text/html; charset=utf-8"}
     except Exception as e:
         return render_error_page(500, f"خطا در ذخیره داده هواشناسی: {e}")

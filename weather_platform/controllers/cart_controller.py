@@ -43,10 +43,10 @@ def handle_cart_view(headers, user_display=""):
         if not cart_items:
             cart_content = '''
             <div class="text-center py-12">
-                <div class="text-6xl mb-4">🛒</div>
+                <div class="text-6xl mb-4"></div>
                 <h3 class="text-2xl font-bold text-gray-700 mb-2">سبد خرید شما خالی است</h3>
                 <p class="text-gray-500 mb-6">برای مشاهده محصولات، به کاتالوگ مراجعه کنید.</p>
-                <a href="/weather_platform/products/catalog" class="btn btn-primary">📋 مشاهده محصولات</a>
+                <a href="/weather_platform/products/catalog" class="btn btn-primary">مشاهده محصولات</a>
             </div>
             '''
             item_count = 0
@@ -71,7 +71,7 @@ def handle_cart_view(headers, user_display=""):
                     </td>
                     <td>{total_item_price} تومان</td>
                     <td>
-                        <a href="/weather_platform/cart/remove/{item['cart_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم اطمینان دارید؟')">🗑️ حذف</a>
+                        <a href="/weather_platform/cart/remove/{item['cart_id']}" class="btn btn-sm btn-danger" onclick="return confirm('آیا از حذف این آیتم اطمینان دارید؟')">حذف</a>
                     </td>
                 </tr>
                 """
@@ -102,8 +102,8 @@ def handle_cart_view(headers, user_display=""):
                 </table>
             </div>
             <div class="mt-6 flex gap-4">
-                <a href="/weather_platform/products/catalog" class="btn btn-secondary">📋 ادامه خرید</a>
-                <a href="#" class="btn btn-primary flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">💳 تسویه حساب</a>
+                <a href="/weather_platform/products/catalog" class="btn btn-secondary">ادامه خرید</a>
+                <a href="#" class="btn btn-primary flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">تسویه حساب</a>
             </div>
             '''
             item_count = len(cart_items)
@@ -157,7 +157,7 @@ def handle_cart_add(path, headers):
 
         return """
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-            <strong>✅ موفق!</strong> محصول به سبد خرید اضافه شد.
+            <strong>موفق!</strong> محصول به سبد خرید اضافه شد.
             <br>
             <a href="/weather_platform/cart" class="text-green-800 underline">مشاهده سبد خرید</a>
         </div>
@@ -202,7 +202,7 @@ def handle_cart_update(path, body, headers):
 
         return """
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-            ✅ تعداد آیتم بروزرسانی شد.
+            تعداد آیتم بروزرسانی شد.
             <br>
             <a href="/weather_platform/cart" class="text-green-800 underline">بازگشت به سبد خرید</a>
         </div>
@@ -236,7 +236,7 @@ def handle_cart_remove(path, headers):
 
         return """
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-            ✅ آیتم از سبد خرید حذف شد.
+            آیتم از سبد خرید حذف شد.
             <br>
             <a href="/weather_platform/cart" class="text-green-800 underline">بازگشت به سبد خرید</a>
         </div>
