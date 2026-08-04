@@ -36,6 +36,7 @@ def get_user_by_session(session_id):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
+    # join session and users table
     cursor.execute('''
                    SELECT u.id, u.username, u.email, u.full_name, u.role, u.is_active
                    FROM sessions s
