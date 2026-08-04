@@ -668,3 +668,6 @@ def add_is_deleted_column():
 
 if __name__ == '__main__':
     setup_database()
+
+
+# ye chizi
